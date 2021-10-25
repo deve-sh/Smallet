@@ -18,7 +18,6 @@ interface FirestoreUserUpdates {
 }
 
 export const updateUserDetails = async (
-	userId: string,
 	updates: FirestoreUserUpdates,
 	callback: (error: string | null) => any
 ) => {
@@ -26,7 +25,7 @@ export const updateUserDetails = async (
 		await auth.currentUser.updateProfile(updates);
 		await db
 			.collection("users")
-			.doc(userId)
+			.doc(auth.currentUser.uid)
 			.update({
 				...updates,
 				updatedAt: firestore.FieldValue.serverTimestamp(),
