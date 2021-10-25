@@ -3,4 +3,7 @@
 import create from "zustand";
 import store from "../store";
 
-export default create(store);
+const createdStore = create(store);
+export default function useStore(selector): any {
+	return createdStore(selector);
+}
