@@ -19,7 +19,6 @@ const App = ({ Component: Page, pageProps }) => {
 				};
 				getToken();
 			}
-            console.log(setUser);
 			setUser(user);
 		});
 	}, []);
