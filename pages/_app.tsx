@@ -1,4 +1,7 @@
 import { useEffect } from "react";
+
+// Firebase Authentication APIs
+import { updateUserDetails } from "../API";
 import auth, { getToken } from "../firebase/authentication";
 
 import useStore from "../hooks/useStore";
@@ -25,6 +28,9 @@ const App = ({ Component: Page, pageProps }) => {
 					),
 				};
 				getToken();
+				updateUserDetails(user, (errorUpdating: string) => {
+					if (errorUpdating) console.error(errorUpdating);
+				});
 			}
 			setUser(user);
 		});

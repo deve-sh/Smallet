@@ -26,10 +26,13 @@ export const updateUserDetails = async (
 		await db
 			.collection("users")
 			.doc(auth.currentUser.uid)
-			.update({
-				...updates,
-				updatedAt: firestore.FieldValue.serverTimestamp(),
-			});
+			.set(
+				{
+					...updates,
+					updatedAt: firestore.FieldValue.serverTimestamp(),
+				},
+				{ merge: true }
+			);
 		return callback(null);
 	} catch (err) {
 		if (process.env.NODE_ENV !== "production") console.log(err);
