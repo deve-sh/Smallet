@@ -36,7 +36,7 @@ export const getUserNotifications = async (
 };
 
 export const markNotificationsAsRead = async (
-	notificationIds: [string],
+	notificationIds: string[],
 	callback: (errorMessage: string | null) => any
 ) => {
 	try {
