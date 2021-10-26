@@ -42,7 +42,8 @@ const OTPInput = ({ length = 6, submitOTP, disabled }) => {
 		setOTPValue(newValue.join(""));
 		if (index === length - 1) {
 			// Submit the form
-			if (submitOTP && submitOTP instanceof Function) submitOTP(newValue);
+			if (submitOTP && submitOTP instanceof Function)
+				submitOTP(newValue.join(""));
 		} else {
 			if (
 				inputRefs.current[index] &&

@@ -74,17 +74,16 @@ const LoginModal = ({ isOpen, closeModal }) => {
 		setIsLoggingIn(true);
 		sendOTPToUser(phoneNumber, (err, confirmationResult) => {
 			setIsLoggingIn(false);
-			globalThis?.recaptchaVerifier?.clear?.();
 			if (err) return toasts.generateError(err);
 			if (confirmationResult) {
 				setupOTPResendInterval();
 				setPhoneNumberConfirmationResult(confirmationResult);
-				setShowOTPInputs(false);
+				setShowOTPInputs(true);
 			}
 		});
 	};
 
-	const startSignIn = async (event) => {
+	const startSignInWithOTP = async (event) => {
 		event.preventDefault();
 		if (phoneNumberConfirmationResult || showOTPInputs) return;
 		setIsLoggingIn(true);
@@ -138,7 +137,7 @@ const LoginModal = ({ isOpen, closeModal }) => {
 							/>
 						</>
 					)}
-					<Text color="grey">
+					<Text color="grey" marginTop="15px">
 						{showResendOTPButton ? (
 							<>
 								<Button
@@ -156,18 +155,20 @@ const LoginModal = ({ isOpen, closeModal }) => {
 							""
 						)}
 					</Text>
-					<Button
-						disabled={isLoggingIn}
-						autoFocus
-						variant="solid"
-						type="submit"
-						isFullWidth
-						colorScheme="teal"
-						marginTop="20px"
-						rightIcon={<MdSend size="1.25rem" />}
-					>
-						{showOTPInputs ? "Login" : "Send OTP"}
-					</Button>
+					{!showOTPInputs && (
+						<Button
+							isLoading={isLoggingIn}
+							autoFocus
+							variant="solid"
+							onClick={startSignInWithOTP}
+							isFullWidth
+							colorScheme="teal"
+							marginTop="20px"
+							rightIcon={<MdSend size="1.25rem" />}
+						>
+							Send OTP
+						</Button>
+					)}
 					<Divider margin="20px 0" colorScheme="blue" size="large" />
 					<Button
 						isLoading={isLoggingIn}
