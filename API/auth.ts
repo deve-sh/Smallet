@@ -1,3 +1,4 @@
+import { FirebaseUser } from "../@types";
 import auth, { firebaseAuth, providers } from "../firebase/authentication";
 
 export const loginWithGoogle = async (
@@ -64,3 +65,15 @@ export async function submitOTP(
 		return callback(err.message, null);
 	}
 }
+
+export const saveUserDetailsToDatabase = async (
+	userId: string,
+	userDetails: FirebaseUser,
+	callback: (errorMessage: string | null) => any
+) => {
+	try {
+	} catch (err) {
+		if (process.env.NODE_ENV === "development") console.log(err);
+		return callback(err.message);
+	}
+};

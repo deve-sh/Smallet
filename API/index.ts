@@ -1,3 +1,4 @@
+import { FirebaseUser } from "../@types";
 import db, { firestore } from "../firebase/firestore";
 import auth from "../firebase/authentication";
 
@@ -10,15 +11,8 @@ export const getUserDetails = async (userId: string) => {
 	}
 };
 
-interface FirestoreUserUpdates {
-	email?: string | null;
-	displayName?: string | null;
-	photoURL?: string | null;
-	phoneNumber?: string;
-}
-
 export const updateUserDetails = async (
-	updates: FirestoreUserUpdates,
+	updates: FirebaseUser,
 	callback: (error: string | null) => any
 ) => {
 	try {
