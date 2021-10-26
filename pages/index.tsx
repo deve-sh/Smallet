@@ -1,3 +1,5 @@
+import ContentWrapper from "../components/Layout/ContentWrapper";
+
 export default function Home() {
-	return <>Welcome To Smallet</>;
+	return <ContentWrapper>Welcome To Smallet</ContentWrapper>;
 }

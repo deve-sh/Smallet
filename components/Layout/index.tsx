@@ -6,6 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import GlobalStyles from "./GlobalStyles";
 import Header from "./Header";
+import AppContentContainer from "./AppContentContainer";
 
 import useStore from "../../hooks/useStore";
 
@@ -16,7 +17,7 @@ const AppLayout = ({ children, logoutUser = () => null }) => {
 		<ChakraProvider>
 			<GlobalStyles darkMode={isDarkModeActive} />
 			<Header logoutUser={logoutUser} />
-			{children}
+			<AppContentContainer>{children}</AppContentContainer>
 		</ChakraProvider>
 	);
 };

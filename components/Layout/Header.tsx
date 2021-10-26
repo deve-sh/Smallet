@@ -18,6 +18,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import useStore from "../../hooks/useStore";
 
 const AppHeader = styled(Box)`
+	position: fixed;
 	border-bottom: 0.075rem solid var(--backgroundgrey);
 	padding: var(--mini-spacing);
 	z-index: 101;
@@ -59,7 +60,7 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 			<Container direction="row">
 				<Left>
 					<Link href="/">
-						<Logo src="/logo.png" alt="Smallet Logo" />
+						<Logo src="/images/logo.png" alt="Smallet Logo" />
 					</Link>
 				</Left>
 				<Right>
