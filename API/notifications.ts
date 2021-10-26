@@ -3,7 +3,12 @@ import auth from "../firebase/authentication";
 
 interface NotificationContent {
 	text: string;
-	type: "wallet" | "profile";
+	type:
+		| "wallet"
+		| "profile"
+		| "moneyrequest"
+		| "moneydeducted"
+		| "moneycredited";
 	read: boolean;
 	url?: string;
 	image?: string;
