@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Firebase Authentication APIs
-import { updateUserDetails } from "../API";
+import { saveUserDetailsToDatabase } from "../API/auth";
 import auth, { getToken } from "../firebase/authentication";
 
 import useStore from "../hooks/useStore";
@@ -21,6 +21,7 @@ const App = ({ Component: Page, pageProps }) => {
 			let user = null;
 			if (userFromFirebase) {
 				user = {
+					id: userFromFirebase.uid,
 					uid: userFromFirebase.uid,
 					isAnonymous: userFromFirebase.isAnonymous,
 					displayName: userFromFirebase.displayName,
@@ -35,7 +36,7 @@ const App = ({ Component: Page, pageProps }) => {
 					),
 				};
 				getToken();
-				updateUserDetails(user, (errorUpdating: string) => {
+				saveUserDetailsToDatabase(user.uid, user, (errorUpdating: string) => {
 					if (errorUpdating) console.error(errorUpdating);
 				});
 			}

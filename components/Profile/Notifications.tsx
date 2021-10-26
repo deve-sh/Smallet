@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	IconButton,
 	Menu,
@@ -8,10 +8,26 @@ import {
 } from "@chakra-ui/react";
 import { MdNotifications, MdNotificationImportant } from "react-icons/md";
 
+import useStore from "../../hooks/useStore";
 import NoneFound from "../Layout/NoneFound";
 
+import { getUserNotifications } from "../../API/notifications";
+
+import toasts from "../../utils/toasts";
+
 const UserNotifications = () => {
+	const user = useStore((state) => state.user);
 	const [notifications, setNotifications] = useState([]);
+
+	useEffect(() => {
+		if (user) {
+			const userId = user.uid || user.id;
+			getUserNotifications(userId, null, (err, notificationsFetched) => {
+				if (err) return toasts.generateError(err);
+				setNotifications(notificationsFetched || []);
+			});
+		}
+	}, []);
 
 	return (
 		<>
@@ -32,7 +48,11 @@ const UserNotifications = () => {
 						<NoneFound
 							label="No Notifications Here."
 							icon={() => (
-								<MdNotificationImportant color="gray" fontSize="5rem" />
+								<MdNotificationImportant
+									style={{ transform: "rotate(15deg)" }}
+									color="gray"
+									fontSize="5rem"
+								/>
 							)}
 						/>
 					)}
