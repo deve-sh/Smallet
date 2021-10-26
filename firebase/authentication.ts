@@ -12,6 +12,7 @@ const googleProvider = new mainFirebase.auth.GoogleAuthProvider();
 const githubProvider = new mainFirebase.auth.GithubAuthProvider();
 
 export default auth;
+export const firebaseAuth = mainFirebase.auth;
 export const providers = { googleProvider, githubProvider, mainFirebase };
 
 const getToken = async (refreshToken = true) => {
