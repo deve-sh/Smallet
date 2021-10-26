@@ -145,6 +145,7 @@ const LoginModal = ({ isOpen, closeModal }) => {
 									variant="ghost"
 									href="#"
 									onClick={sendOTP}
+									isLoading={isLoggingIn}
 								>
 									Resend OTP
 								</Button>
