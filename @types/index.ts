@@ -18,3 +18,17 @@ export interface ProviderDataEntity {
 	phoneNumber: string;
 	providerId: string;
 }
+
+export interface NotificationContent {
+	text: string;
+	type:
+		| "wallet"
+		| "profile"
+		| "moneyrequest"
+		| "moneydeducted"
+		| "moneycredited";
+	read: boolean;
+	url?: string;
+	image?: string;
+	amountChange?: number;
+}

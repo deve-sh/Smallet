@@ -1,19 +1,7 @@
+import { NotificationContent } from "../@types";
+
 import db, { firestore } from "../firebase/firestore";
 import auth from "../firebase/authentication";
-
-interface NotificationContent {
-	text: string;
-	type:
-		| "wallet"
-		| "profile"
-		| "moneyrequest"
-		| "moneydeducted"
-		| "moneycredited";
-	read: boolean;
-	url?: string;
-	image?: string;
-	amountChange?: number;
-}
 
 export const getUserNotifications = async (
 	userId: string,
