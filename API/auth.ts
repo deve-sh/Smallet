@@ -1,4 +1,20 @@
-import auth, { firebaseAuth } from "../firebase/authentication";
+import auth, { firebaseAuth, providers } from "../firebase/authentication";
+
+export const loginWithGoogle = async (
+	callback: (errorMessage: string | null) => any
+) => {
+	try {
+		if (!auth.currentUser) {
+			await auth.signInWithPopup(providers.googleProvider);
+			return callback(null);
+		} else return callback("User already signed in.");
+	} catch (err) {
+		console.log(err);
+		return callback(err.message);
+	}
+};
+
+// OTP Based Login
 
 export async function setupRecaptchaVerifier(
 	callback: (errorMessage: string | null, recaptchaVerifier: any) => any
