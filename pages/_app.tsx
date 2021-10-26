@@ -43,12 +43,16 @@ const App = ({ Component: Page, pageProps }) => {
 		});
 	}, []);
 
+	const logoutUser = () => {
+		auth.signOut();
+	};
+
 	return (
 		<>
 			<Head>
 				<title>Smallet - Your Personal Wallet</title>
 			</Head>
-			<AppLayout>
+			<AppLayout logoutUser={logoutUser}>
 				<ToastContainer />
 				{isLoading && "Loading"}
 				<Page {...pageProps} />
