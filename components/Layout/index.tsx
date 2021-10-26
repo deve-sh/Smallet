@@ -2,6 +2,7 @@
  * Common App Layout
  */
 
+import dynamic from "next/dynamic";
 import {
 	ChakraProvider,
 	useDisclosure as useToggleableModal,
@@ -12,7 +13,8 @@ import Header from "./Header";
 import AppContentContainer from "./AppContentContainer";
 
 import useStore from "../../hooks/useStore";
-import LoginModal from "../Authentication/LoginModal";
+
+const LoginModal = dynamic(() => import("../Authentication/LoginModal"));
 
 const AppLayout = ({ children, logoutUser = () => null }) => {
 	const isDarkModeActive = useStore((store) => store.isDarkModeActive);
