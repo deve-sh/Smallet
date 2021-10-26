@@ -16,6 +16,7 @@ import {
 import { FaMoon, FaSun } from "react-icons/fa";
 
 import useStore from "../../hooks/useStore";
+import UserNotifications from "../Profile/Notifications";
 
 const AppHeader = styled(Box)`
 	position: fixed;
@@ -83,14 +84,17 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 								Login
 							</Button>
 						) : (
-							<Button
-								colorScheme="teal"
-								variant="outline"
-								leftIcon={<LogoutIcon size="1.375rem" />}
-								onClick={logoutUser}
-							>
-								Logout
-							</Button>
+							<>
+								<UserNotifications />
+								<Button
+									colorScheme="teal"
+									variant="outline"
+									leftIcon={<LogoutIcon size="1.375rem" />}
+									onClick={logoutUser}
+								>
+									Logout
+								</Button>
+							</>
 						)}
 					</ButtonGroup>
 				</Right>
