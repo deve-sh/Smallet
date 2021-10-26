@@ -1,5 +1,6 @@
 import { FirebaseUser } from "../@types";
 import auth, { firebaseAuth, providers } from "../firebase/authentication";
+import db, { firestore } from "../firebase/firestore";
 
 export const loginWithGoogle = async (
 	callback: (errorMessage: string | null) => any
@@ -72,6 +73,54 @@ export const saveUserDetailsToDatabase = async (
 	callback: (errorMessage: string | null) => any
 ) => {
 	try {
+		const userRef = db.collection("users").doc(userId);
+
+		const user = await userRef.get();
+		const batch = db.batch();
+
+		if (user.exists) {
+			batch.update(userRef, userDetails);
+		} else {
+			// New user, lots of processing.
+			// Create wallet document
+			batch.set(
+				db.collection("wallets").doc(userId),
+				{
+					balance: 0,
+					nTransactions: 0,
+					user: userId,
+					id: userId,
+					createdAt: firestore.FieldValue.serverTimestamp(),
+					updatedAt: firestore.FieldValue.serverTimestamp(),
+				},
+				{ merge: true }
+			);
+			// Set User Document
+			batch.set(
+				userRef,
+				{
+					...userDetails,
+					createdAt: firestore.FieldValue.serverTimestamp(),
+					updatedAt: firestore.FieldValue.serverTimestamp(),
+					id: userId,
+				},
+				{ merge: true }
+			);
+			// Create a 'complete your profile now' notification.
+			batch.set(db.collection("notifications").doc(), {
+				user: userId,
+				type: "profile",
+				text: "Welcome to Smallet! Complete your profile now!",
+				read: false,
+				createdBy: userId,
+				url: "/user/profile",
+				createdAt: firestore.FieldValue.serverTimestamp(),
+				updatedAt: firestore.FieldValue.serverTimestamp(),
+			});
+		}
+
+		await batch.commit();
+		return callback(null);
 	} catch (err) {
 		if (process.env.NODE_ENV === "development") console.log(err);
 		return callback(err.message);
