@@ -11,16 +11,16 @@ const toastOptions: ToastOptions = {
 };
 
 const toasts = {
-	generateToast: (message) => {
+	generateToast: (message: string): any => {
 		return toast(message, toastOptions);
 	},
-	generateSuccess: (sucessMessage = "") => {
+	generateSuccess: (sucessMessage: string = ""): any => {
 		return toast.success(sucessMessage, toastOptions);
 	},
-	generateError: (errorMessage = "") => {
+	generateError: (errorMessage: string = ""): any => {
 		return toast.error(errorMessage, toastOptions);
 	},
-	generateWarning: (warningMessage = "") => {
+	generateWarning: (warningMessage: string = ""): any => {
 		return toast.warn(warningMessage, toastOptions);
 	},
 };
