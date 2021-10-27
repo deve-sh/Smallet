@@ -70,7 +70,7 @@ export async function submitOTP(
 export const saveUserDetailsToDatabase = async (
 	userId: string,
 	userDetails: FirebaseUser,
-	callback: (errorMessage: string | null) => any
+	callback: (errorMessage: string | null, userDetails?: FirebaseUser) => any
 ) => {
 	try {
 		const userRef = db.collection("users").doc(userId);
@@ -120,7 +120,7 @@ export const saveUserDetailsToDatabase = async (
 		}
 
 		await batch.commit();
-		return callback(null);
+		return callback(null, (await userRef.get()).data() as FirebaseUser);
 	} catch (err) {
 		if (process.env.NODE_ENV === "development") console.log(err);
 		return callback(err.message);

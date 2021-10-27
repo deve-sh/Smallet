@@ -14,6 +14,7 @@ import { subscribeUserToWebPush } from "../utils/notificationHelpers";
 import useStore from "../hooks/useStore";
 
 import AppLayout from "../components/Layout";
+import { FirebaseUser } from "../@types";
 
 const App = ({ Component: Page, pageProps }) => {
 	if (typeof window !== "undefined") registerServiceWorker();
@@ -44,9 +45,14 @@ const App = ({ Component: Page, pageProps }) => {
 					),
 				};
 				getToken();
-				saveUserDetailsToDatabase(user.uid, user, (errorUpdating: string) => {
-					if (errorUpdating) console.error(errorUpdating);
-				});
+				saveUserDetailsToDatabase(
+					user.uid,
+					user,
+					(errorUpdating: string, userDetailsFromDatabase: FirebaseUser) => {
+						if (errorUpdating) console.error(errorUpdating);
+						if (userDetailsFromDatabase) setUser(userDetailsFromDatabase);
+					}
+				);
 				// Ask for permission to send notifications.
 				subscribeUserToWebPush(
 					{
