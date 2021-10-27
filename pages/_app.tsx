@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { saveUserDetailsToDatabase } from "../API/auth";
 import auth, { getToken } from "../firebase/authentication";
 import registerServiceWorker from "../utils/registerServiceWorker";
+import { subscribeUserToWebPush } from "../utils/notificationHelpers";
 
 import useStore from "../hooks/useStore";
 
@@ -41,6 +42,17 @@ const App = ({ Component: Page, pageProps }) => {
 				saveUserDetailsToDatabase(user.uid, user, (errorUpdating: string) => {
 					if (errorUpdating) console.error(errorUpdating);
 				});
+				// Ask for permission to send notifications.
+				subscribeUserToWebPush(
+					{
+						uid: user.uid,
+						email: user.email,
+						phoneNumber: user.phoneNumber,
+					},
+					(err) => {
+						if (err) console.log(err);
+					}
+				);
 			}
 			setUser(user);
 		});
