@@ -15,6 +15,8 @@ import useStore from "../hooks/useStore";
 import AppLayout from "../components/Layout";
 
 const App = ({ Component: Page, pageProps }) => {
+	if (typeof window !== "undefined") registerServiceWorker();
+
 	const setUser: Function = useStore((store) => store.setUser);
 	const isLoading: boolean = useStore((store) => store.isLoading);
 
@@ -56,7 +58,6 @@ const App = ({ Component: Page, pageProps }) => {
 			}
 			setUser(user);
 		});
-		registerServiceWorker();
 	}, []);
 
 	const logoutUser = () => {

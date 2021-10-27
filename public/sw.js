@@ -1,4 +1,25 @@
-self.addEventListener("install", () => {});
+self.addEventListener("install", () => console.log("Hello from SW"));
+
+var CACHE_NAME = "pwa-smallet";
+
+// Cache and return requests
+self.addEventListener("fetch", (event) => {});
+
+// Update a service worker
+self.addEventListener("activate", (event) => {
+	var cacheWhitelist = [CACHE_NAME];
+	event.waitUntil(
+		caches.keys().then((cacheNames) => {
+			return Promise.all(
+				cacheNames.map((cacheName) => {
+					if (cacheWhitelist.indexOf(cacheName) === -1) {
+						return caches.delete(cacheName);
+					}
+				})
+			);
+		})
+	);
+});
 
 importScripts("https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/8.0.1/firebase-messaging.js");
