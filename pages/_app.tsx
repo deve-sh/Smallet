@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 // Firebase Authentication APIs
 import { saveUserDetailsToDatabase } from "../API/auth";
 import auth, { getToken } from "../firebase/authentication";
+import registerServiceWorker from "../utils/registerServiceWorker";
 
 import useStore from "../hooks/useStore";
 
@@ -17,6 +18,7 @@ const App = ({ Component: Page, pageProps }) => {
 	const isLoading: boolean = useStore((store) => store.isLoading);
 
 	useEffect(() => {
+		// Mount Service Worker
 		auth.onAuthStateChanged((userFromFirebase) => {
 			let user = null;
 			if (userFromFirebase) {
@@ -42,6 +44,7 @@ const App = ({ Component: Page, pageProps }) => {
 			}
 			setUser(user);
 		});
+		registerServiceWorker();
 	}, []);
 
 	const logoutUser = () => {
