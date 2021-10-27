@@ -13,7 +13,7 @@ import {
 	MdAccountCircle as LoginIcon,
 	MdLogout as LogoutIcon,
 } from "react-icons/md";
-import { FaMoon, FaSun } from "react-icons/fa";
+import { FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
 
 import useStore from "../../hooks/useStore";
 import UserNotifications from "../Profile/Notifications";
@@ -61,7 +61,9 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 			<Container direction="row">
 				<Left>
 					<Link href="/">
-						<Logo src="/images/logo.png" alt="Smallet Logo" />
+						<a>
+							<Logo src="/images/logo.png" alt="Smallet Logo" />
+						</a>
 					</Link>
 				</Left>
 				<Right>
@@ -86,6 +88,17 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 						) : (
 							<>
 								<UserNotifications />
+								<Link href="/user/profile">
+									<a>
+										<IconButton
+											aria-label="Profile"
+											colorScheme="teal"
+											variant="ghost"
+										>
+											<FaUserCircle />
+										</IconButton>
+									</a>
+								</Link>
 								<Button
 									colorScheme="teal"
 									variant="outline"
