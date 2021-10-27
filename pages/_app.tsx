@@ -68,6 +68,18 @@ const App = ({ Component: Page, pageProps }) => {
 			<Head>
 				<title>Smallet - Your Personal Wallet</title>
 				<link rel="icon" href="/logo.png" />
+				<link rel="manifest" href="/manifest.json" />
+				<link rel="shortcut icon" href="/sprite512.png" />
+				<link rel="apple-touch-icon" sizes="512x512" href="/sprite512.png" />
+				<meta charSet="utf-8" />
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1, shrink-to-fit=no"
+				/>
+				<meta name="theme-color" content="#008080" />
+				<meta name="description" content="Smallet - Your Personal Wallet" />
+				<meta name="author" content="Devesh Kumar" />
+				<meta name="HandheldFriendly" content="True" />
 			</Head>
 			<AppLayout logoutUser={logoutUser}>
 				<ToastContainer />
