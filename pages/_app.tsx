@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 
 import { ToastContainer } from "react-toastify";
@@ -16,6 +17,8 @@ import AppLayout from "../components/Layout";
 
 const App = ({ Component: Page, pageProps }) => {
 	if (typeof window !== "undefined") registerServiceWorker();
+
+	const router = useRouter();
 
 	const setUser: Function = useStore((store) => store.setUser);
 	const isLoading: boolean = useStore((store) => store.isLoading);
@@ -62,6 +65,7 @@ const App = ({ Component: Page, pageProps }) => {
 
 	const logoutUser = () => {
 		auth.signOut();
+		router.push("/");
 	};
 
 	return (
