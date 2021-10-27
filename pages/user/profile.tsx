@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Head from "next/head";
 import styled from "@emotion/styled";
 
@@ -6,11 +6,16 @@ import {
 	Avatar,
 	Heading,
 	Text,
+	IconButton,
+	Button,
 	Stat,
 	StatNumber,
 	StatHelpText,
+	Input,
+	// For Modals
+	useDisclosure,
 } from "@chakra-ui/react";
-import { MdEmail, MdPhone } from "react-icons/md";
+import { MdEdit, MdEmail, MdPhone, MdSend } from "react-icons/md";
 
 import useStore from "../../hooks/useStore";
 
@@ -20,6 +25,8 @@ import {
 } from "../../API/auth";
 
 import ContentWrapper from "../../components/Layout/ContentWrapper";
+import ReusableModal from "../../components/Modal";
+
 import setupProtectedRoute from "../../utils/setupProtectedRoute";
 import toasts from "../../utils/toasts";
 
@@ -37,6 +44,15 @@ const UserProfile = () => {
 	const user = useStore((state) => state.user);
 	const setUser = useStore((state) => state.setUser);
 	const profilePictureFileUpdaterRef = useRef(null);
+
+	const [updatedDisplayName, setUpdatedDisplayName] = useState(
+		user?.displayName || ""
+	);
+	const {
+		isOpen: showNameUpdaterModal,
+		onOpen: openNameUpdaterModal,
+		onClose: closeNameUpdaterModal,
+	} = useDisclosure();
 
 	const toggleProfilePictureFileUpdater = () =>
 		profilePictureFileUpdaterRef.current?.click();
@@ -62,8 +78,22 @@ const UserProfile = () => {
 		}
 	};
 
-	const updateProfileBasicInfo = async (e) => {
+	const updateProfileName = async (e) => {
 		e.preventDefault();
+		if (updatedDisplayName) {
+			saveUserDetailsToDatabase(
+				user.uid,
+				{
+					...user,
+					displayName: updatedDisplayName,
+				},
+				(err, updatedUserDetails) => {
+					if (err) return toasts.generateError(err);
+					if (updatedUserDetails) setUser(updatedUserDetails);
+					closeNameUpdaterModal();
+				}
+			);
+		}
 	};
 
 	return (
@@ -84,15 +114,53 @@ const UserProfile = () => {
 					ref={profilePictureFileUpdaterRef}
 					onChange={updateProfilePicture}
 				/>
-				<Heading marginTop="1.5rem">{user?.displayName || "Unnamed"}</Heading>
+				<Heading marginTop="1.5rem" display="flex" alignItems="center">
+					{user?.displayName || "Unnamed"}&nbsp;
+					<IconButton
+						colorScheme="gray"
+						variant="ghost"
+						aria-label="Edit Name"
+						title="Edit Name"
+						onClick={openNameUpdaterModal}
+					>
+						<MdEdit />
+					</IconButton>
+				</Heading>
+				<ReusableModal
+					title="Update Name"
+					isOpen={showNameUpdaterModal}
+					onClose={() => {
+						closeNameUpdaterModal();
+						setUpdatedDisplayName(user?.displayName || "");
+					}}
+					actionButton={
+						<Button
+							colorScheme="teal"
+							variant="solid"
+							rightIcon={<MdSend size="1.25rem" />}
+							onClick={updateProfileName}
+						>
+							Update
+						</Button>
+					}
+				>
+					<Input
+						placeholder="Name"
+						onChange={(e) => {
+							e.persist();
+							setUpdatedDisplayName(e.target.value);
+						}}
+						required
+					/>
+				</ReusableModal>
 				<Stat marginTop="1.5rem">
 					<StatNumber>{user?.nTransactions || 0}</StatNumber>
 					<StatHelpText>Number Of Transactions</StatHelpText>
 				</Stat>
 				<Text
 					display="flex"
-					marginTop="1.5rem"
 					alignItems="center"
+					marginTop="1.5rem"
 					fontSize="md"
 					color="gray"
 				>

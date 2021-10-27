@@ -14,7 +14,7 @@ const ReusableModal = ({
 	title = "",
 	isOpen = false,
 	onClose = () => null,
-	actionButton = "",
+	actionButton = <></>,
 }) => (
 	<Modal isOpen={isOpen} onClose={onClose}>
 		<ModalOverlay />
