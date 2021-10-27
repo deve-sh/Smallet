@@ -8,7 +8,7 @@ export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 				const valuesToReturnAsInitialProps = await callback(ctx);
 				return valuesToReturnAsInitialProps;
 			}
-			return {};
+			return { protected: true };
 		}
 		// Redirect to home page.
 		res.writeHead(302, {
