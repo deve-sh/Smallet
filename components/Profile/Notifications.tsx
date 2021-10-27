@@ -12,7 +12,9 @@ import {
 import { MdNotifications, MdNotificationImportant } from "react-icons/md";
 
 import useStore from "../../hooks/useStore";
+
 import NoneFound from "../Layout/NoneFound";
+import NotificationTile from "./NotificationTile";
 
 import {
 	getUserNotifications,
@@ -78,10 +80,17 @@ const UserNotifications = () => {
 			>
 				{hasUnreadNotifications && <NotificationPop />}
 			</MenuButton>
-			<MenuList minHeight="50vh" minWidth="35vw">
+			<MenuList minHeight="50vh" maxHeight="65vh" minWidth="35vw">
 				{notifications.length ? (
 					notifications.map((notification) => (
-						<MenuItem>{notification.text}</MenuItem>
+						<MenuItem borderBottom="0.075rem solid #efefef">
+							<NotificationTile
+								text={notification.text}
+								url={notification.url}
+								image={notification.image}
+								amountChange={notification.amountChange}
+							/>
+						</MenuItem>
 					))
 				) : (
 					<NoneFound
