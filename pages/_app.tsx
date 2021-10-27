@@ -67,6 +67,7 @@ const App = ({ Component: Page, pageProps }) => {
 		<>
 			<Head>
 				<title>Smallet - Your Personal Wallet</title>
+				<link rel="icon" href="/logo.png" />
 			</Head>
 			<AppLayout logoutUser={logoutUser}>
 				<ToastContainer />
