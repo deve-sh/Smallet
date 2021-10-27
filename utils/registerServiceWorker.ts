@@ -7,6 +7,8 @@ export default function registerServiceWorker() {
 						"Service Worker registration successful with scope: ",
 						registration.scope
 					);
+					// Creating a global service worker registration in order to use it for firebase cloud messaging.
+					globalThis.globalServiceWorkerRegistration = registration;
 				},
 				function (err) {
 					console.log("Service Worker registration failed: ", err);
