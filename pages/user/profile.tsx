@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import Head from "next/head";
 import styled from "@emotion/styled";
 
@@ -12,8 +13,14 @@ import {
 
 import useStore from "../../hooks/useStore";
 
+import {
+	saveUserDetailsToDatabase,
+	uploadProfilePicture,
+} from "../../API/auth";
+
 import ContentWrapper from "../../components/Layout/ContentWrapper";
 import setupProtectedRoute from "../../utils/setupProtectedRoute";
+import toasts from "../../utils/toasts";
 
 const ProfileContentWrapper = styled(ContentWrapper)`
 	padding: var(--standard-spacing);
@@ -21,8 +28,42 @@ const ProfileContentWrapper = styled(ContentWrapper)`
 	text-align: center;
 `;
 
+const ProfilePictureUpdaterInput = styled.input`
+	display: none;
+`;
+
 const UserProfile = () => {
 	const user = useStore((state) => state.user);
+	const setUser = useStore((state) => state.setUser);
+	const profilePictureFileUpdaterRef = useRef(null);
+
+	const toggleProfilePictureFileUpdater = () =>
+		profilePictureFileUpdaterRef.current?.click();
+
+	const updateProfilePicture = async (e) => {
+		const file = e?.target?.files?.[0];
+		if (file && user) {
+			uploadProfilePicture(file, (error, newURL) => {
+				if (error) return toasts.generateError(error);
+				if (newURL)
+					saveUserDetailsToDatabase(
+						user.uid,
+						{
+							...user,
+							photoURL: newURL,
+						},
+						(err, updatedUserDetails) => {
+							if (err) return toasts.generateError(err);
+							if (updatedUserDetails) setUser(updatedUserDetails);
+						}
+					);
+			});
+		}
+	};
+
+	const updateProfileBasicInfo = async (e) => {
+		e.preventDefault();
+	};
 
 	return (
 		<>
@@ -34,6 +75,13 @@ const UserProfile = () => {
 					name={user?.displayName || ""}
 					src={user?.photoURL}
 					size="2xl"
+					cursor="pointer"
+					onClick={toggleProfilePictureFileUpdater}
+				/>
+				<ProfilePictureUpdaterInput
+					type="file"
+					ref={profilePictureFileUpdaterRef}
+					onChange={updateProfilePicture}
 				/>
 				<Heading marginTop="1.5rem">{user?.displayName || "Unnamed"}</Heading>
 				<Stat marginTop="1.5rem">

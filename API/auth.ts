@@ -1,6 +1,7 @@
 import { FirebaseUser } from "../@types";
 import auth, { firebaseAuth, providers } from "../firebase/authentication";
 import db, { firestore } from "../firebase/firestore";
+import storage from "../firebase/storage";
 
 export const loginWithGoogle = async (
 	callback: (errorMessage: string | null) => any
@@ -123,6 +124,23 @@ export const saveUserDetailsToDatabase = async (
 		return callback(null, (await userRef.get()).data() as FirebaseUser);
 	} catch (err) {
 		if (process.env.NODE_ENV === "development") console.log(err);
+		return callback(err.message);
+	}
+};
+
+export const uploadProfilePicture = async (profilePicture, callback) => {
+	try {
+		let profilePictureImageRef = storage.ref(
+			`profilepictures/${auth.currentUser?.uid}.png`
+		);
+
+		let profilePictureImageData = await profilePictureImageRef.put(
+			profilePicture
+		);
+		let url = await profilePictureImageData.ref.getDownloadURL();
+		return callback(null, url);
+	} catch (err) {
+		console.error(err);
 		return callback(err.message);
 	}
 };
