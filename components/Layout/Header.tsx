@@ -27,8 +27,8 @@ const AppHeader = styled(Box)`
 `;
 
 const Logo = styled(Image)`
-	width: 32px;
-	height: 32px;
+	width: 42px;
+	height: 42px;
 `;
 
 const Container = styled(Stack)`
@@ -62,7 +62,7 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 				<Left>
 					<Link href="/">
 						<a>
-							<Logo src="/images/logo.png" alt="Smallet Logo" />
+							<Logo src="/logo.png" alt="Smallet Logo" />
 						</a>
 					</Link>
 				</Left>
