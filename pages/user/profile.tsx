@@ -10,6 +10,7 @@ import {
 	StatNumber,
 	StatHelpText,
 } from "@chakra-ui/react";
+import { MdEmail, MdPhone } from "react-icons/md";
 
 import useStore from "../../hooks/useStore";
 
@@ -88,11 +89,25 @@ const UserProfile = () => {
 					<StatNumber>{user?.nTransactions || 0}</StatNumber>
 					<StatHelpText>Number Of Transactions</StatHelpText>
 				</Stat>
-				<Text marginTop="1.5rem" fontSize="md" color="gray">
-					{user?.phoneNumber}
+				<Text
+					display="flex"
+					marginTop="1.5rem"
+					alignItems="center"
+					fontSize="md"
+					color="gray"
+				>
+					<MdPhone size="1.25rem" />
+					&nbsp;{user?.phoneNumber || "-"}
 				</Text>
-				<Text marginTop="1.5rem" fontSize="md" color="gray">
-					{user?.email}
+				<Text
+					display="flex"
+					marginTop="1.5rem"
+					alignItems="center"
+					fontSize="md"
+					color="gray"
+				>
+					<MdEmail size="1.25rem" />
+					&nbsp;{user?.email || "-"}
 				</Text>
 
 				<Text marginTop="1.5rem" fontSize="sm" color="gray">
