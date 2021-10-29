@@ -1,4 +1,4 @@
-self.addEventListener("install", () => console.log("Hello from SW"));
+self.addEventListener("install", () => null);
 
 var CACHE_NAME = "pwa-smallet";
 
