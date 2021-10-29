@@ -15,14 +15,22 @@ const WalletImage = styled(Image)`
 	max-width: 45vw;
 `;
 
-const MakeWalletPayments = ({ error, orderInfo, transactionInfo }) => {
+const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 	const user = useStore((state) => state.user);
 
 	const [errorMessage, setErrorMessage] = useState(error);
 	const [transactionState, setTransactionState] = useState("not-started");
 
 	function initializePayment() {
-		if (user.uid !== orderInfo.user) return;
+		if (
+			orderInfo.status !== "created" ||
+			transactionInfo.status === "paid" ||
+			transactionInfo.status === "failed"
+		)
+			return setErrorMessage(
+				"Payment process has already taken place. Please check back in some time."
+			);
+		if (user.uid !== orderInfo.user) return setErrorMessage("Unauthorized");
 
 		const options = {
 			key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -89,7 +97,7 @@ const MakeWalletPayments = ({ error, orderInfo, transactionInfo }) => {
 	);
 };
 
-MakeWalletPayments.getInitialProps = setupProtectedRoute(async (context) => {
+MakeWalletPayment.getInitialProps = setupProtectedRoute(async (context) => {
 	try {
 		const { query } = context;
 
@@ -115,4 +123,4 @@ MakeWalletPayments.getInitialProps = setupProtectedRoute(async (context) => {
 	}
 });
 
-export default MakeWalletPayments;
+export default MakeWalletPayment;
