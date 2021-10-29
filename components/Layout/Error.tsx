@@ -10,7 +10,6 @@ export default function Error({ errorMessage }) {
 		<Container centerContent maxW="container.xl" padding="1rem">
 			<ErrorImage
 				src="/error.svg"
-				boxSize="15rem"
 				objectFit="cover"
 				alt="Error"
 			/>
