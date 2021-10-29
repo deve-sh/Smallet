@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Script from "next/script";
+import styled from "@emotion/styled";
+import { Container, Text, Image } from "@chakra-ui/react";
 
 import db from "../firebase/firestore";
 import useStore from "../hooks/useStore";
@@ -9,9 +11,14 @@ import setupProtectedRoute from "../utils/setupProtectedRoute";
 
 import Error from "../components/Layout/Error";
 
+const WalletImage = styled(Image)`
+	max-width: 45vw;
+`;
+
 const MakeWalletPayments = ({ error, orderInfo, transactionInfo }) => {
 	const user = useStore((state) => state.user);
 
+	const [errorMessage, setErrorMessage] = useState(error);
 	const [transactionState, setTransactionState] = useState("not-started");
 
 	function initializePayment() {
@@ -45,6 +52,7 @@ const MakeWalletPayments = ({ error, orderInfo, transactionInfo }) => {
 		const razorpayPaymentInstance = new globalThis.Razorpay(options);
 		razorpayPaymentInstance.on("payment.failed", (response) => {
 			setTransactionState("failed");
+			setErrorMessage(response.error.description);
 			console.log(response.error.code);
 			console.log(response.error.description);
 			console.log(response.error.source);
@@ -58,23 +66,26 @@ const MakeWalletPayments = ({ error, orderInfo, transactionInfo }) => {
 		setTransactionState("started");
 	}
 
-	return error ? (
-		<Error errorMessage={error} />
+	return errorMessage ? (
+		<Error errorMessage={errorMessage} />
 	) : (
-		<>
-			Payment Page Here
-			<div style={{ whiteSpace: "pre-wrap" }}>
-				{JSON.stringify(orderInfo, null, 4)}
-			</div>
+		<Container maxW="container.xl" centerContent padding="2rem">
+			<WalletImage src="/wallet.svg" objectFit="cover" alt="Wallet" />
 			<br />
-			<div style={{ whiteSpace: "pre-wrap" }}>
-				{JSON.stringify(transactionInfo, null, 4)}
-			</div>
+			<Text fontSize="lg" colorScheme="gray">
+				{transactionState === "not-started"
+					? "Transaction starting"
+					: transactionState === "started"
+					? "Transaction In Progress"
+					: transactionState === "successful"
+					? "Transaction Successful. Your Balance will reflect in your wallet soon."
+					: "Transaction Failed"}
+			</Text>
 			<Script
 				src="https://checkout.razorpay.com/v1/checkout.js"
 				onLoad={initializePayment}
 			/>
-		</>
+		</Container>
 	);
 };
 
