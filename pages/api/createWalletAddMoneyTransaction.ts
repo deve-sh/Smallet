@@ -31,31 +31,38 @@ export default async function createWalletAddMoneyTransaction(
 			.doc();
 		const orderRef = admin.firestore().collection("orders").doc();
 
-		batch.set(transactionRef, {
-			user: decodedToken.uid,
-			amount,
-			wallet: decodedToken.uid,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
-		batch.set(orderRef, {
-			user: decodedToken.uid,
-			amount,
-			wallet: decodedToken.uid,
-			transaction: transactionRef.id,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		});
-
 		razorpay.orders.create(
 			{
 				amount,
 				currency: "INR",
-				receipt: orderRef.id,
+				receipt: transactionRef.id,
+				notes: {
+					transactionId: transactionRef.id,
+					user: decodedToken.uid,
+				},
 			},
-			(err, order) => {
+			async (err, order) => {
 				if (err) return error(500, err.message);
-				console.log(order);
+				const orderRef = admin.firestore().collection("orders").doc(order.id);
+				batch.set(transactionRef, {
+					user: decodedToken.uid,
+					amount,
+					wallet: decodedToken.uid,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					status: "pending",
+					order: order.id,
+				});
+				batch.set(orderRef, {
+					...order,
+					user: decodedToken.uid,
+					amount,
+					wallet: decodedToken.uid,
+					transaction: transactionRef.id,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				});
+				await batch.commit();
 				return res
 					.status(201)
 					.json({ message: "Created Order Successfully", order });
