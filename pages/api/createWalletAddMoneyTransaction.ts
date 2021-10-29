@@ -29,7 +29,6 @@ export default async function createWalletAddMoneyTransaction(
 			.firestore()
 			.collection("wallettransactions")
 			.doc();
-		const orderRef = admin.firestore().collection("orders").doc();
 
 		razorpay.orders.create(
 			{
