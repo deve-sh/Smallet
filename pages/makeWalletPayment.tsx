@@ -1,15 +1,22 @@
 /* Dedicated Page to make wallet payments. */
+
+import { useState } from "react";
 import Script from "next/script";
-import { useRouter } from "next/router";
+
 import db from "../firebase/firestore";
 import useStore from "../hooks/useStore";
 import setupProtectedRoute from "../utils/setupProtectedRoute";
 
-const MakeWalletPayments = ({ error, orderInfo, transaction }) => {
-	const router = useRouter();
+import Error from "../components/Layout/Error";
+
+const MakeWalletPayments = ({ error, orderInfo, transactionInfo }) => {
 	const user = useStore((state) => state.user);
 
+	const [transactionState, setTransactionState] = useState("not-started");
+
 	function initializePayment() {
+		if (user.uid !== orderInfo.user) return;
+
 		const options = {
 			key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
 			amount: orderInfo.amount,
@@ -19,6 +26,7 @@ const MakeWalletPayments = ({ error, orderInfo, transaction }) => {
 			image: "https://smallet.vercel.app/logo512.png",
 			order_id: orderInfo.id,
 			handler: function (response) {
+				setTransactionState("successful");
 				console.log("Payment Successful: ");
 				console.log(response.razorpay_payment_id);
 				console.log(response.razorpay_order_id);
@@ -36,6 +44,7 @@ const MakeWalletPayments = ({ error, orderInfo, transaction }) => {
 		};
 		const razorpayPaymentInstance = new globalThis.Razorpay(options);
 		razorpayPaymentInstance.on("payment.failed", (response) => {
+			setTransactionState("failed");
 			console.log(response.error.code);
 			console.log(response.error.description);
 			console.log(response.error.source);
@@ -46,13 +55,21 @@ const MakeWalletPayments = ({ error, orderInfo, transaction }) => {
 		});
 
 		razorpayPaymentInstance.open();
+		setTransactionState("started");
 	}
 
 	return error ? (
-		<>Error: {error}</>
+		<Error errorMessage={error} />
 	) : (
 		<>
 			Payment Page Here
+			<div style={{ whiteSpace: "pre-wrap" }}>
+				{JSON.stringify(orderInfo, null, 4)}
+			</div>
+			<br />
+			<div style={{ whiteSpace: "pre-wrap" }}>
+				{JSON.stringify(transactionInfo, null, 4)}
+			</div>
 			<Script
 				src="https://checkout.razorpay.com/v1/checkout.js"
 				onLoad={initializePayment}
@@ -82,7 +99,7 @@ MakeWalletPayments.getInitialProps = setupProtectedRoute(async (context) => {
 
 		return { orderInfo, transactionInfo, user: orderInfo.user };
 	} catch (err) {
-        console.log(err);
+		console.log(err);
 		return { error: err.message };
 	}
 });
