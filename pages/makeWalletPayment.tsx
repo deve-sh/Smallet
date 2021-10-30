@@ -20,6 +20,7 @@ const WalletImage = styled(Image)`
 
 const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 	const user = useStore((state) => state.user);
+	const setUser = useStore((state) => state.setUser);
 
 	const paymentFailuresCount = useRef(0);
 	const [errorMessage, setErrorMessage] = useState(error);
@@ -60,6 +61,10 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 							setTransactionState("failed");
 							return toasts.generateError(error);
 						}
+						setUser({
+							...user,
+							nSuccessfulTransactions: (user.nSuccessFulTransactions || 0) + 1,
+						});
 						setTransactionState("successful");
 						toasts.generateSuccess("Payment Successful");
 					}
@@ -100,6 +105,10 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 							setTransactionState("failed");
 							return toasts.generateError(error);
 						}
+						setUser({
+							...user,
+							nFailedTransactions: (user.nFailedTransactions || 0) + 1,
+						});
 					}
 				);
 				razorpayPaymentInstance.close();
