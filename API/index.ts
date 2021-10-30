@@ -33,3 +33,21 @@ export const updateUserDetails = async (
 		return callback(err.message);
 	}
 };
+
+export const getWalletDetails = async (
+	userId: string,
+	callback: (errorMessage: string | null, walletInfo: any) => any
+) => {
+	try {
+		return callback(
+			null,
+			(await db.collection("wallets").doc(userId).get()).data()
+		);
+	} catch (err) {
+		console.log(err);
+		return callback(err.message, null);
+	}
+};
+
+export const getWalletRef = (userId: string) =>
+	db.collection("wallets").doc(userId);
