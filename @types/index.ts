@@ -32,3 +32,14 @@ export interface NotificationContent {
 	image?: string;
 	amountChange?: number;
 }
+
+export interface Transaction {
+	amount: number;
+	createdAt: any;
+	error?: any;
+	order?: string;
+	status: "failed" | "paid" | "pending";
+	updatedAt?: any;
+	user: string;
+	wallet: string;
+}
