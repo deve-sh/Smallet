@@ -55,6 +55,7 @@ export default async function createWalletAddMoneyTransaction(
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					status: "pending",
+					type: "wallet_topup",
 					order: order.id,
 				});
 				batch.set(orderRef, {
