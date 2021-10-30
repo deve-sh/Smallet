@@ -51,7 +51,7 @@ const TransactionTile = ({ transaction }: TransactionTileProps) => {
 			</a>
 		</Link>
 	) : (
-		""
+		<></>
 	);
 };
 
