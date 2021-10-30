@@ -29,6 +29,7 @@ import ReusableModal from "../../components/Modal";
 
 import setupProtectedRoute from "../../utils/setupProtectedRoute";
 import toasts from "../../utils/toasts";
+import { updateUserDetails } from "../../API";
 
 const ProfileContentWrapper = styled(ContentWrapper)`
 	padding: var(--standard-spacing);
@@ -62,35 +63,48 @@ const UserProfile = () => {
 		if (file && user) {
 			uploadProfilePicture(file, (error, newURL) => {
 				if (error) return toasts.generateError(error);
-				if (newURL)
-					saveUserDetailsToDatabase(
-						user.uid,
-						{
-							...user,
-							photoURL: newURL,
-						},
-						(err, updatedUserDetails) => {
-							if (err) return toasts.generateError(err);
-							if (updatedUserDetails) setUser(updatedUserDetails);
+				if (newURL) {
+					updateUserDetails(
+						{ ...user, photoURL: newURL },
+						(userUpdateError) => {
+							if (userUpdateError) return toasts.generateError(userUpdateError);
+							saveUserDetailsToDatabase(
+								user.uid,
+								{
+									...user,
+									photoURL: newURL,
+								},
+								(err, updatedUserDetails) => {
+									if (err) return toasts.generateError(err);
+									if (updatedUserDetails) setUser(updatedUserDetails);
+								}
+							);
 						}
 					);
+				}
 			});
 		}
 	};
 
-	const updateProfileName = async (e) => {
+	const updateProfileName = (e) => {
 		e.preventDefault();
 		if (updatedDisplayName) {
-			saveUserDetailsToDatabase(
-				user.uid,
-				{
-					...user,
-					displayName: updatedDisplayName,
-				},
-				(err, updatedUserDetails) => {
-					if (err) return toasts.generateError(err);
-					if (updatedUserDetails) setUser(updatedUserDetails);
-					closeNameUpdaterModal();
+			updateUserDetails(
+				{ ...user, displayName: updatedDisplayName },
+				(userUpdateError) => {
+					if (userUpdateError) return toasts.generateError(userUpdateError);
+					saveUserDetailsToDatabase(
+						user.uid,
+						{
+							...user,
+							displayName: updatedDisplayName,
+						},
+						(err, updatedUserDetails) => {
+							if (err) return toasts.generateError(err);
+							if (updatedUserDetails) setUser(updatedUserDetails);
+							closeNameUpdaterModal();
+						}
+					);
 				}
 			);
 		}
