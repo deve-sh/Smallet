@@ -34,6 +34,7 @@ export interface NotificationContent {
 }
 
 export interface Transaction {
+	id: string;
 	amount: number;
 	createdAt: any;
 	error?: any;
