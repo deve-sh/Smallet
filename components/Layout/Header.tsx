@@ -6,6 +6,7 @@ import {
 	Button,
 	IconButton,
 	ButtonGroup,
+	HStack,
 } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/color-mode";
 import styled from "@emotion/styled";
@@ -13,7 +14,7 @@ import {
 	MdAccountCircle as LoginIcon,
 	MdLogout as LogoutIcon,
 } from "react-icons/md";
-import { FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
+import { FaMoon, FaSun, FaUserCircle, FaWallet } from "react-icons/fa";
 
 import useStore from "../../hooks/useStore";
 import UserNotifications from "../Profile/Notifications";
@@ -86,8 +87,19 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 								Login
 							</Button>
 						) : (
-							<>
+							<HStack spacing="0.5rem">
 								<UserNotifications />
+								<Link href="/user/wallet">
+									<a>
+										<IconButton
+											aria-label="Wallet"
+											colorScheme="teal"
+											variant="ghost"
+										>
+											<FaWallet />
+										</IconButton>
+									</a>
+								</Link>
 								<Link href="/user/profile">
 									<a>
 										<IconButton
@@ -107,7 +119,7 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 								>
 									Logout
 								</Button>
-							</>
+							</HStack>
 						)}
 					</ButtonGroup>
 				</Right>

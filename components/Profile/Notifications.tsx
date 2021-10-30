@@ -73,7 +73,7 @@ const UserNotifications = () => {
 		<Menu onOpen={onNotificationsDrawerOpen}>
 			<MenuButton
 				variant="ghost"
-				colorScheme="gray"
+				colorScheme="teal"
 				as={IconButton}
 				icon={<MdNotifications />}
 				aria-label="Toggle Notifications"
