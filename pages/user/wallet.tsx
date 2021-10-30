@@ -1,4 +1,5 @@
 import Head from "next/head";
+import styled from "@emotion/styled";
 import {
 	Container,
 	Stat,
@@ -7,9 +8,14 @@ import {
 	StatHelpText,
 	StatArrow,
 	StatGroup,
+	Image,
+	Center,
+	HStack,
+	Box,
 } from "@chakra-ui/react";
 import { FaMoneyCheck } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
+import { Transaction } from "../../@types";
 
 import ContentWrapper from "../../components/Layout/ContentWrapper";
 import FullPageLoader from "../../components/Layout/FullPageLoader";
@@ -20,7 +26,21 @@ import setupProtectedRoute from "../../utils/setupProtectedRoute";
 import toasts from "../../utils/toasts";
 import NoneFound from "../../components/Layout/NoneFound";
 import TransactionTile from "../../components/Wallet/TransactionTile";
-import { Transaction } from "../../@types";
+
+const TransactionsSection = styled(HStack)`
+	align-items: flex-start;
+	justify-content: flex-start;
+	@media only screen and (max-width: 768px) {
+		flex-direction: column;
+	}
+`;
+
+const TransactionList = styled(Box)`
+	min-width: 70%;
+	@media only screen and (max-width: 768px) {
+		min-width: 100%;
+	}
+`;
 
 const Wallet = ({}) => {
 	const user = useStore((state) => state.user);
@@ -47,7 +67,7 @@ const Wallet = ({}) => {
 							return toasts.generateError(errorFetchingTransactions);
 						setTransactions((transactions) => [
 							...transactions,
-							transactionsRef.docs.map((transaction) => ({
+							...transactionsRef.docs.map((transaction) => ({
 								...transaction.data(),
 								id: transaction.id,
 							})),
@@ -98,6 +118,9 @@ const Wallet = ({}) => {
 								{walletInfo.lastTransaction ? (
 									<>
 										<StatArrow
+											color={
+												walletInfo.lastTransaction > 0 ? "green.700" : "red.700"
+											}
 											type={
 												walletInfo.lastTransaction > 0 ? "increase" : "decrease"
 											}
@@ -118,25 +141,35 @@ const Wallet = ({}) => {
 								{parseInt(walletInfo.nTransactions)}
 							</StatNumber>
 							<StatHelpText fontSize="1.125rem">
-								<StatArrow type="increase" />
+								<StatArrow type="increase" color="green.700" />
 								{walletInfo.nSuccessfulTransactions || 0}
 								&nbsp;&nbsp;
-								<StatArrow type="decrease" />
+								<StatArrow type="decrease" color="red.700" />
 								{walletInfo.nFailedTransactions || 0}
 							</StatHelpText>
 						</Stat>
 					</StatGroup>
 					<br />
-					{transactions.length ? (
-						transactions.map((transaction: Transaction) => (
-							<TransactionTile key={transaction.id} transaction={transaction} />
-						))
-					) : (
-						<NoneFound
-							label="No Transactions To Show Yet"
-							icon={() => <FaMoneyCheck size="5rem" color="gray" />}
-						/>
-					)}
+					<TransactionsSection>
+						<TransactionList minWidth="70%">
+							{transactions.length ? (
+								transactions.map((transaction: Transaction) => (
+									<TransactionTile
+										key={transaction.id}
+										transaction={transaction}
+									/>
+								))
+							) : (
+								<NoneFound
+									label="No Transactions To Show Yet"
+									icon={() => <FaMoneyCheck size="5rem" color="gray" />}
+								/>
+							)}
+						</TransactionList>
+						<Center width="30%" p={5}>
+							<Image src="/purchase.svg" maxWidth="100%" />
+						</Center>
+					</TransactionsSection>
 				</Container>
 			)}
 		</ContentWrapper>
