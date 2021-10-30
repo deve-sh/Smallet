@@ -21,7 +21,6 @@ export default async function createWalletAddMoneyTransaction(
 
 		// Get user details from token.
 		const decodedToken = await validateIdToken(authorization);
-
 		if (!decodedToken) return error(401, "Unauthorized");
 
 		const batch = admin.firestore().batch();
