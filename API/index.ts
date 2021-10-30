@@ -44,10 +44,31 @@ export const getWalletDetails = async (
 			(await db.collection("wallets").doc(userId).get()).data()
 		);
 	} catch (err) {
-		console.log(err);
+		if (process.env.NODE_ENV !== "production") console.log(err);
 		return callback(err.message, null);
 	}
 };
 
 export const getWalletRef = (userId: string) =>
 	db.collection("wallets").doc(userId);
+
+// Wallet Transactions
+export const getWalletTransactions = async (
+	walletId: string,
+	startAfter: any,
+	callback: (errorMessage: string | null, transactionList: any) => any
+) => {
+	try {
+		let transactionsRef = db
+			.collection("wallettransactions")
+			.where("wallet", "==", walletId)
+			.orderBy("updatedAt", "desc");
+		if (startAfter) transactionsRef = transactionsRef.startAfter(startAfter);
+		transactionsRef = transactionsRef.limit(5);
+
+		return callback(null, await transactionsRef.get());
+	} catch (err) {
+		if (process.env.NODE_ENV !== "production") console.log(err);
+		return callback(err.message, null);
+	}
+};
