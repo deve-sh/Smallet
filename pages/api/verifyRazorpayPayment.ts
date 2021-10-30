@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createHmac } from "crypto";
 
 import admin from "../../firebase/admin";
 import { validateIdToken } from "../../utils/firebaseAdminUtils";
@@ -66,6 +67,18 @@ export default async function verifyRazorpayPayment(
 		if (status === "successful") {
 			if (!razorpay_payment_id || !razorpay_signature)
 				return error(400, "Incomplete Information");
+
+			// Verifying signature
+			const generatedSignature = createHmac(
+				"sha256",
+				process.env.RAZORPAY_KEY_SECRET
+			)
+				.update(razorpay_payment_id + "|" + razorpay_payment_id)
+				.digest("hex");
+
+			if (generatedSignature != razorpay_signature)
+				return error(403, "Unauthorized");
+
 			const orderPayments = await razorpay.orders.fetchPayments(
 				razorpay_order_id
 			);
