@@ -63,6 +63,17 @@ const GlobalStyles = ({ darkMode = false }) => (
 					display: none;
 				}
 			}
+
+			@media (max-width: 768px) {
+				.hideonsmall {
+					display: none;
+				}
+
+				.logoutbutton .chakra-button__icon {
+					margin: 0;
+					margin-inline-end: 0;
+				}
+			}
 		`}
 	/>
 );

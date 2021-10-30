@@ -38,11 +38,11 @@ const Container = styled(Stack)`
 `;
 
 const Left = styled.div`
-	width: 35%;
+	width: 20%;
 `;
 
 const Right = styled(Left)`
-	width: 65%;
+	width: 80%;
 	text-align: right;
 `;
 
@@ -114,10 +114,16 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 								<Button
 									colorScheme="teal"
 									variant="outline"
+									className="logoutbutton"
 									leftIcon={<LogoutIcon size="1.375rem" />}
 									onClick={logoutUser}
 								>
-									Logout
+									<span
+										className="hideonsmall"
+										style={{ marginLeft: "0.5rem" }}
+									>
+										Logout
+									</span>
 								</Button>
 							</HStack>
 						)}
