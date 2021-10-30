@@ -85,19 +85,19 @@ export default async function verifyRazorpayPayment(
 			batch.update(orderRef, {
 				...razorpayOrder,
 				payments: orderPayments,
-				updatedAt: new Date().getTime(),
+				updatedAt: new Date(),
 			});
 			batch.update(transactionRef, {
 				status: "paid",
-				updatedAt: new Date().getTime(),
+				updatedAt: new Date(),
 			});
 			batch.update(walletRef, {
-				nTransactions: admin.firestore.FieldValue.increment(1),
+				nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
 				updatedAt: new Date(),
 				balance: admin.firestore.FieldValue.increment(razorpayOrder.amount),
 			});
 			batch.update(userRef, {
-				nTransactions: admin.firestore.FieldValue.increment(1),
+				nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
 				updatedAt: new Date(),
 			});
 		} else {
@@ -106,12 +106,20 @@ export default async function verifyRazorpayPayment(
 			batch.update(orderRef, {
 				...razorpayOrder,
 				payments: [],
-				updatedAt: new Date().getTime(),
+				updatedAt: new Date(),
 			});
 			batch.update(transactionRef, {
 				status: "failed",
 				error: razorpayError,
-				updatedAt: new Date().getTime(),
+				updatedAt: new Date(),
+			});
+			batch.update(walletRef, {
+				nFailedTransactions: admin.firestore.FieldValue.increment(1),
+				updatedAt: new Date(),
+			});
+			batch.update(userRef, {
+				nFailedTransactions: admin.firestore.FieldValue.increment(1),
+				updatedAt: new Date(),
 			});
 		}
 

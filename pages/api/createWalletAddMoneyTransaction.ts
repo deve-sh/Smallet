@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import razorpay from "../../utils/razorpay";
 import admin from "../../firebase/admin";
 import { validateIdToken } from "../../utils/firebaseAdminUtils";
+import { firestore } from "../../firebase/firestore";
 
 export default async function createWalletAddMoneyTransaction(
 	req: NextApiRequest,
@@ -28,6 +29,11 @@ export default async function createWalletAddMoneyTransaction(
 			.firestore()
 			.collection("wallettransactions")
 			.doc();
+		const userRef = admin.firestore().collection("users").doc(decodedToken.uid);
+		const walletRef = admin
+			.firestore()
+			.collection("wallets")
+			.doc(decodedToken.uid);
 
 		razorpay.orders.create(
 			{
@@ -58,6 +64,14 @@ export default async function createWalletAddMoneyTransaction(
 					wallet: decodedToken.uid,
 					transaction: transactionRef.id,
 					createdAt: new Date(),
+					updatedAt: new Date(),
+				});
+				batch.update(userRef, {
+					nTransactions: firestore.FieldValue.increment(1),
+					updatedAt: new Date(),
+				});
+				batch.update(walletRef, {
+					nTransactions: admin.firestore.FieldValue.increment(1),
 					updatedAt: new Date(),
 				});
 				await batch.commit();
