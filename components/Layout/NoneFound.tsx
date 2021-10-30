@@ -1,7 +1,7 @@
 import { Container, Text, Icon } from "@chakra-ui/react";
 import { MdFilterList } from "react-icons/md";
 
-const NoneFound = ({ label = "", icon }) => (
+const NoneFound = ({ label = "", icon = undefined }) => (
 	<Container
 		centerContent
 		alignItems="center"

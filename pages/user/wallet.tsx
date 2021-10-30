@@ -1,3 +1,4 @@
+import Head from "next/head";
 import {
 	Container,
 	Stat,
@@ -7,15 +8,19 @@ import {
 	StatArrow,
 	StatGroup,
 } from "@chakra-ui/react";
-import Head from "next/head";
+import { FaMoneyCheck } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 
 import ContentWrapper from "../../components/Layout/ContentWrapper";
 import FullPageLoader from "../../components/Layout/FullPageLoader";
 
-import { getWalletRef } from "../../API";
+import { getWalletRef, getWalletTransactions } from "../../API";
 import useStore from "../../hooks/useStore";
 import setupProtectedRoute from "../../utils/setupProtectedRoute";
+import toasts from "../../utils/toasts";
+import NoneFound from "../../components/Layout/NoneFound";
+import TransactionTile from "../../components/Wallet/TransactionTile";
+import { Transaction } from "../../@types";
 
 const Wallet = ({}) => {
 	const user = useStore((state) => state.user);
@@ -25,19 +30,48 @@ const Wallet = ({}) => {
 
 	const [transactions, setTransactions] = useState([]);
 	const [transactionsStartAfter, setTransactionsStartAfter] = useState(null);
+	const [loadMore, setLoadMore] = useState(false);
 
 	useEffect(() => {
-		walletRealtimeSubscriptionRef.current = getWalletRef(user?.uid).onSnapshot(
-			(walletDoc) => setWalletInfo(walletDoc.data())
-		);
+		if (user?.uid) {
+			walletRealtimeSubscriptionRef.current = getWalletRef(
+				user?.uid
+			).onSnapshot((walletDoc) => setWalletInfo(walletDoc.data()));
 
-		return () => {
-			if (
-				walletRealtimeSubscriptionRef.current &&
-				typeof walletRealtimeSubscriptionRef.current === "function"
-			)
-				walletRealtimeSubscriptionRef.current();
-		};
+			if (Number(user?.nTransactions)) {
+				getWalletTransactions(
+					user?.uid,
+					transactionsStartAfter,
+					(errorFetchingTransactions, transactionsRef) => {
+						if (errorFetchingTransactions)
+							return toasts.generateError(errorFetchingTransactions);
+						setTransactions((transactions) => [
+							...transactions,
+							transactionsRef.docs.map((transaction) => ({
+								...transaction.data(),
+								id: transaction.id,
+							})),
+						]);
+						setTransactionsStartAfter(
+							transactionsRef.docs[transactionsRef.docs.length - 1]
+						);
+						if (
+							transactions.length + transactionsRef.docs.length >=
+							user?.nTransactions
+						)
+							setLoadMore(false);
+					}
+				);
+			}
+
+			return () => {
+				if (
+					walletRealtimeSubscriptionRef.current &&
+					typeof walletRealtimeSubscriptionRef.current === "function"
+				)
+					walletRealtimeSubscriptionRef.current();
+			};
+		}
 	}, []);
 
 	return (
@@ -92,6 +126,17 @@ const Wallet = ({}) => {
 							</StatHelpText>
 						</Stat>
 					</StatGroup>
+					<br />
+					{transactions.length ? (
+						transactions.map((transaction: Transaction) => (
+							<TransactionTile key={transaction.id} transaction={transaction} />
+						))
+					) : (
+						<NoneFound
+							label="No Transactions To Show Yet"
+							icon={() => <FaMoneyCheck size="5rem" color="gray" />}
+						/>
+					)}
 				</Container>
 			)}
 		</ContentWrapper>
