@@ -42,6 +42,14 @@ const TransactionList = styled(Box)`
 	}
 `;
 
+const TransactionListImageContainer = styled(Center)`
+	padding: var(--standard-spacing);
+	width: 30%;
+	@media only screen and (max-width: 768px) {
+		width: 100%;
+	}
+`;
+
 const Wallet = ({}) => {
 	const user = useStore((state) => state.user);
 
@@ -166,9 +174,9 @@ const Wallet = ({}) => {
 								/>
 							)}
 						</TransactionList>
-						<Center width="30%" p={5}>
+						<TransactionListImageContainer>
 							<Image src="/purchase.svg" maxWidth="100%" />
-						</Center>
+						</TransactionListImageContainer>
 					</TransactionsSection>
 				</Container>
 			)}
