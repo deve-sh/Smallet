@@ -21,7 +21,7 @@ export default async function verifyRazorpayPayment(
 			razorpay_payment_id,
 			razorpay_order_id,
 			razorpay_signature,
-			error = {},
+			razorpayError,
 		} = req.body;
 		const { authorization } = req.headers;
 
@@ -39,7 +39,7 @@ export default async function verifyRazorpayPayment(
 
 		const orderData = (await orderRef.get()).data();
 
-		if (!orderData.exists || orderData.user !== decodedToken.uid)
+		if (!orderData || orderData.user !== decodedToken.uid)
 			return error(404, "Payment not found.");
 		else if (orderData.status !== "created")
 			return error(400, "Payment has already been processed.");
@@ -50,7 +50,7 @@ export default async function verifyRazorpayPayment(
 			.doc(orderData.transaction);
 		const transactionData = (await transactionRef.get()).data();
 
-		if (!transactionData.exists || transactionData.user !== decodedToken.uid)
+		if (!transactionData || transactionData.user !== decodedToken.uid)
 			return error(404, "Transaction not found.");
 
 		const batch = admin.firestore().batch();
@@ -102,7 +102,7 @@ export default async function verifyRazorpayPayment(
 			});
 		} else {
 			// Payment failure setting.
-			if (!error) return error(400, "Incomplete Information");
+			if (!razorpayError) return error(400, "Incomplete Information");
 			batch.update(orderRef, {
 				...razorpayOrder,
 				payments: [],
@@ -110,6 +110,7 @@ export default async function verifyRazorpayPayment(
 			});
 			batch.update(transactionRef, {
 				status: "failed",
+				error: razorpayError,
 				updatedAt: new Date().getTime(),
 			});
 		}
