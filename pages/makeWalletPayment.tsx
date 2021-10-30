@@ -1,6 +1,6 @@
 /* Dedicated Page to make wallet payments. */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Script from "next/script";
 import styled from "@emotion/styled";
 import { Container, Text, Image } from "@chakra-ui/react";
@@ -21,6 +21,7 @@ const WalletImage = styled(Image)`
 const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 	const user = useStore((state) => state.user);
 
+	const paymentFailuresCount = useRef(0);
 	const [errorMessage, setErrorMessage] = useState(error);
 	const [transactionState, setTransactionState] = useState("not-started");
 
@@ -76,29 +77,33 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 		};
 		const razorpayPaymentInstance = new globalThis.Razorpay(options);
 		razorpayPaymentInstance.on("payment.failed", async (response) => {
-			setTransactionState("failed");
-			setErrorMessage(
-				response.error.description +
-					". Please try creating another wallet transaction."
-			);
-			request(
-				"/api/verifyRazorpayPayment",
-				{
-					razorpay_payment_id: response.error.metadata.payment_id,
-					razorpay_order_id: orderInfo.id,
-					razorpayError: response.error,
-					status: "error",
-				},
-				{ headers: { authorization: await getToken() } },
-				"post",
-				(error) => {
-					if (error) {
-						setTransactionState("failed");
-						return toasts.generateError(error);
+			paymentFailuresCount.current = paymentFailuresCount.current + 1;
+			if (paymentFailuresCount.current >= 3) {
+				// Mark the entire payment as failed.
+				setTransactionState("failed");
+				setErrorMessage(
+					response.error.description +
+						". Please try creating another wallet transaction."
+				);
+				request(
+					"/api/verifyRazorpayPayment",
+					{
+						razorpay_payment_id: response.error.metadata.payment_id,
+						razorpay_order_id: orderInfo.id,
+						razorpayError: response.error,
+						status: "error",
+					},
+					{ headers: { authorization: await getToken() } },
+					"post",
+					(error) => {
+						if (error) {
+							setTransactionState("failed");
+							return toasts.generateError(error);
+						}
 					}
-				}
-			);
-			razorpayPaymentInstance.close();
+				);
+				razorpayPaymentInstance.close();
+			}
 			console.log(
 				"Payment Failed: ",
 				response.error.code,
