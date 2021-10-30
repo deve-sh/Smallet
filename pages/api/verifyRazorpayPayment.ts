@@ -94,6 +94,7 @@ export default async function verifyRazorpayPayment(
 			batch.update(walletRef, {
 				nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
 				updatedAt: new Date(),
+				lastTransaction: razorpayOrder.amount,
 				balance: admin.firestore.FieldValue.increment(razorpayOrder.amount),
 			});
 			batch.update(userRef, {
