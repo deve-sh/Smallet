@@ -44,18 +44,13 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 			image: "https://smallet.vercel.app/logo512.png",
 			order_id: orderInfo.id,
 			handler: async (response) => {
-				console.log(
-					"Payment Successful: ",
-					response.razorpay_payment_id,
-					response.razorpay_order_id,
-					response.razorpay_signature
-				);
 				request(
 					"/api/verifyRazorpayPayment",
 					{
 						razorpay_payment_id: response.razorpay_payment_id,
 						razorpay_order_id: response.razorpay_order_id,
 						razorpay_signature: response.razorpay_signature,
+						status: "successful",
 					},
 					{ headers: { authorization: await getToken() } },
 					"post",
@@ -82,13 +77,17 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 		const razorpayPaymentInstance = new globalThis.Razorpay(options);
 		razorpayPaymentInstance.on("payment.failed", async (response) => {
 			setTransactionState("failed");
-			setErrorMessage(response.error.description);
+			setErrorMessage(
+				response.error.description +
+					". Please try creating another wallet transaction."
+			);
 			request(
 				"/api/verifyRazorpayPayment",
 				{
 					razorpay_payment_id: response.error.metadata.payment_id,
 					razorpay_order_id: orderInfo.id,
-					error: response.error,
+					razorpayError: response.error,
+					status: "error",
 				},
 				{ headers: { authorization: await getToken() } },
 				"post",
@@ -99,6 +98,7 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 					}
 				}
 			);
+			razorpayPaymentInstance.close();
 			console.log(
 				"Payment Failed: ",
 				response.error.code,
