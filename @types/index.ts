@@ -43,4 +43,5 @@ export interface Transaction {
 	updatedAt?: any;
 	user: string;
 	wallet: string;
+	type?: "wallet_topup" | "money_transfer" | "purchase_transaction";
 }

@@ -13,7 +13,15 @@ interface TransactionTileProps {
 
 const TransactionTile = ({ transaction }: TransactionTileProps) => {
 	return transaction ? (
-		<Link href={`/transaction/${transaction.id}`}>
+		<Link
+			href={
+				transaction.status === "pending" &&
+				transaction.type === "wallet_topup" &&
+				transaction.order
+					? `/makeWalletPayment?orderId=${transaction.order}`
+					: `/transaction/${transaction.id}`
+			}
+		>
 			<a target="_blank" rel="noopener noreferrer">
 				<Box
 					p={5}
