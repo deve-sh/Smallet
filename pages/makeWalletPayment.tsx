@@ -8,6 +8,9 @@ import { Container, Text, Image } from "@chakra-ui/react";
 import db from "../firebase/firestore";
 import useStore from "../hooks/useStore";
 import setupProtectedRoute from "../utils/setupProtectedRoute";
+import toasts from "../utils/toasts";
+import request from "../utils/request";
+import { getToken } from "../firebase/authentication";
 
 import Error from "../components/Layout/Error";
 
@@ -40,12 +43,31 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 			description: "Smallet Money Loading Transaction",
 			image: "https://smallet.vercel.app/logo512.png",
 			order_id: orderInfo.id,
-			handler: function (response) {
-				setTransactionState("successful");
-				console.log("Payment Successful: ");
-				console.log(response.razorpay_payment_id);
-				console.log(response.razorpay_order_id);
-				console.log(response.razorpay_signature);
+			handler: async (response) => {
+				console.log(
+					"Payment Successful: ",
+					response.razorpay_payment_id,
+					response.razorpay_order_id,
+					response.razorpay_signature
+				);
+				request(
+					"/api/verifyRazorpayPayment",
+					{
+						razorpay_payment_id: response.razorpay_payment_id,
+						razorpay_order_id: response.razorpay_order_id,
+						razorpay_signature: response.razorpay_signature,
+					},
+					{ headers: { authorization: await getToken() } },
+					"post",
+					(error) => {
+						if (error) {
+							setTransactionState("failed");
+							return toasts.generateError(error);
+						}
+						setTransactionState("successful");
+						toasts.generateSuccess("Payment Successful");
+					}
+				);
 			},
 			prefill: {
 				name: user?.displayName || "",
@@ -58,16 +80,35 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 			},
 		};
 		const razorpayPaymentInstance = new globalThis.Razorpay(options);
-		razorpayPaymentInstance.on("payment.failed", (response) => {
+		razorpayPaymentInstance.on("payment.failed", async (response) => {
 			setTransactionState("failed");
 			setErrorMessage(response.error.description);
-			console.log(response.error.code);
-			console.log(response.error.description);
-			console.log(response.error.source);
-			console.log(response.error.step);
-			console.log(response.error.reason);
-			console.log(response.error.metadata.order_id);
-			console.log(response.error.metadata.payment_id);
+			request(
+				"/api/verifyRazorpayPayment",
+				{
+					razorpay_payment_id: response.error.metadata.payment_id,
+					razorpay_order_id: orderInfo.id,
+					error: response.error,
+				},
+				{ headers: { authorization: await getToken() } },
+				"post",
+				(error) => {
+					if (error) {
+						setTransactionState("failed");
+						return toasts.generateError(error);
+					}
+				}
+			);
+			console.log(
+				"Payment Failed: ",
+				response.error.code,
+				response.error.description,
+				response.error.source,
+				response.error.step,
+				response.error.reason,
+				response.error.metadata.order_id,
+				response.error.metadata.payment_id
+			);
 		});
 
 		razorpayPaymentInstance.open();
