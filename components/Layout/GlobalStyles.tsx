@@ -23,6 +23,17 @@ const GlobalStyles = ({ darkMode = false }) => (
 				--mini-spacing: 0.75rem;
 			}
 
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			/* Firefox */
+			input[type="number"] {
+				-moz-appearance: textfield;
+			}
+
 			body,
 			#__next {
 				padding: 0;

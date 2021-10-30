@@ -74,6 +74,7 @@ const OTPInput = ({ length = 6, submitOTP, disabled }) => {
 					maxLength={1}
 					placeholder="0"
 					disabled={disabled}
+					type="number"
 				/>
 			))}
 		</OTPInputsWrapper>
