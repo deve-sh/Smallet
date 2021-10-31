@@ -59,12 +59,14 @@ export default async function transferMoneyToOtherWallet(
 			balance: admin.firestore.FieldValue.increment(-amount),
 			nTransactions: admin.firestore.FieldValue.increment(1),
 			nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
+			lastTransaction: -amount,
 			updatedAt: new Date(),
 		});
 		batch.update(userToWalletRef, {
 			balance: admin.firestore.FieldValue.increment(amount),
 			nTransactions: admin.firestore.FieldValue.increment(1),
 			nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
+			lastTransaction: amount,
 			updatedAt: new Date(),
 		});
 		batch.set(fromTransactionRef, {
@@ -104,12 +106,10 @@ export default async function transferMoneyToOtherWallet(
 
 		await batch.commit();
 
-		return res
-			.status(200)
-			.json({
-				message: "Successfully transferred money to user's wallet.",
-				success: true,
-			});
+		return res.status(200).json({
+			message: "Successfully transferred money to user's wallet.",
+			success: true,
+		});
 	} catch (err) {
 		console.log(err);
 		return error(500, err.message);
