@@ -10,10 +10,13 @@ import {
 	Divider,
 	Text,
 	HStack,
+	Alert,
+	AlertIcon,
 } from "@chakra-ui/react";
-import { InfoIcon } from "@chakra-ui/icons";
+import { InfoIcon, WarningIcon } from "@chakra-ui/icons";
 import { IoCheckmarkDone } from "react-icons/io5";
 import { MdClear } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
 import { BsClockHistory } from "react-icons/bs";
 
 import db from "../../firebase/firestore";
@@ -75,15 +78,50 @@ const TransactionPage = ({
 					</>
 				</StatHelpText>
 			</Stat>
-			<Divider my={5} />
-			<Text fontSize="xl" fontWeight={600} mb={3}>
-				User Associated
+			<Divider my={5} colorScheme="teal" />
+			<Text
+				fontSize="md"
+				fontWeight={600}
+				mb={3}
+				display="flex"
+				alignItems="center"
+			>
+				<FaUser style={{ display: "inline" }} /> &nbsp;User Associated
 			</Text>
 			<UserTile
 				user={userInfo}
 				title={userInfo?.displayName}
 				border="1px solid #cfcfcf"
 			/>
+			<Divider my={5} />
+			<Text
+				fontSize="md"
+				fontWeight={600}
+				mb={3}
+				display="flex"
+				alignItems="center"
+			>
+				<WarningIcon /> &nbsp;More Information
+			</Text>
+			{transactionInfo?.status === "failed" &&
+			transactionInfo?.error?.description ? (
+				<Alert status="error">
+					<AlertIcon />
+					There was an error processing your payment:{" "}
+					{transactionInfo.error.description}
+				</Alert>
+			) : (
+				""
+			)}
+			{transactionInfo?.status === "paid" &&
+			orderInfo?.payments?.items?.length ? (
+				<div style={{ textTransform: "capitalize" }}>
+					Payment Method: {orderInfo.payments.items[0].method}
+				</div>
+			) : (
+				""
+			)}
+			{transactionInfo?.status === "pending" ? "None Available" : ""}
 		</Container>
 	);
 };
