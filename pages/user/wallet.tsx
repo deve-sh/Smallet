@@ -34,6 +34,7 @@ import toasts from "../../utils/toasts";
 import NoneFound from "../../components/Layout/NoneFound";
 import TransactionTile from "../../components/Wallet/TransactionTile";
 import AddMoneyTransactionModal from "../../components/Wallet/AddMoneyTranactionModal";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const TransactionsSection = styled(HStack)`
 	align-items: flex-start;
@@ -69,10 +70,41 @@ const Wallet = ({}) => {
 
 	const [walletInfo, setWalletInfo] = useState(null);
 	const walletRealtimeSubscriptionRef = useRef(() => null);
+	const isFetchingTransactions = useRef(false);
 
 	const [transactions, setTransactions] = useState([]);
 	const [transactionsStartAfter, setTransactionsStartAfter] = useState(null);
 	const [loadMore, setLoadMore] = useState(false);
+
+	const fetchTransactions = () => {
+		if (Number(user?.nTransactions) && !isFetchingTransactions.current) {
+			isFetchingTransactions.current = true;
+			getWalletTransactions(
+				user?.uid,
+				transactionsStartAfter,
+				(errorFetchingTransactions, transactionsRef) => {
+					isFetchingTransactions.current = false;
+					if (errorFetchingTransactions)
+						return toasts.generateError(errorFetchingTransactions);
+					setTransactions((transactions) => [
+						...transactions,
+						...transactionsRef.docs.map((transaction) => ({
+							...transaction.data(),
+							id: transaction.id,
+						})),
+					]);
+					setTransactionsStartAfter(
+						transactionsRef.docs[transactionsRef.docs.length - 1]
+					);
+					if (
+						transactions.length + transactionsRef.docs.length >=
+						user?.nTransactions
+					)
+						setLoadMore(false);
+				}
+			);
+		}
+	};
 
 	useEffect(() => {
 		if (user?.uid) {
@@ -80,31 +112,7 @@ const Wallet = ({}) => {
 				user?.uid
 			).onSnapshot((walletDoc) => setWalletInfo(walletDoc.data()));
 
-			if (Number(user?.nTransactions)) {
-				getWalletTransactions(
-					user?.uid,
-					transactionsStartAfter,
-					(errorFetchingTransactions, transactionsRef) => {
-						if (errorFetchingTransactions)
-							return toasts.generateError(errorFetchingTransactions);
-						setTransactions((transactions) => [
-							...transactions,
-							...transactionsRef.docs.map((transaction) => ({
-								...transaction.data(),
-								id: transaction.id,
-							})),
-						]);
-						setTransactionsStartAfter(
-							transactionsRef.docs[transactionsRef.docs.length - 1]
-						);
-						if (
-							transactions.length + transactionsRef.docs.length >=
-							user?.nTransactions
-						)
-							setLoadMore(false);
-					}
-				);
-			}
+			fetchTransactions();
 
 			return () => {
 				if (
@@ -220,6 +228,22 @@ const Wallet = ({}) => {
 									label="No Transactions To Show Yet"
 									icon={() => <FaMoneyCheck size="5rem" color="gray" />}
 								/>
+							)}
+							<br />
+							{loadMore ? (
+								<Center>
+									<Button
+										shadow="sm"
+										variant="outline"
+										colorScheme="teal"
+										onClick={fetchTransactions}
+										leftIcon={<ChevronDownIcon fontSize="1.5rem" />}
+									>
+										Load More
+									</Button>
+								</Center>
+							) : (
+								""
 							)}
 						</TransactionList>
 						<TransactionListImageContainer>
