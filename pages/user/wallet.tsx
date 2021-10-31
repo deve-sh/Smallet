@@ -21,11 +21,16 @@ import {
 import { FaMoneyCheck } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { BiTransfer } from "react-icons/bi";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { Transaction } from "../../@types";
 
 import ContentWrapper from "../../components/Layout/ContentWrapper";
 import FullPageLoader from "../../components/Layout/FullPageLoader";
+import NoneFound from "../../components/Layout/NoneFound";
+import TransactionTile from "../../components/Wallet/TransactionTile";
+import AddMoneyTransactionModal from "../../components/Wallet/AddMoneyTranactionModal";
+import TransferMoneyModal from "../../components/Wallet/TransferMoney";
 
 import { getWalletRef } from "../../API";
 import { getWalletTransactions } from "../../API/wallet";
@@ -33,10 +38,6 @@ import { getWalletTransactions } from "../../API/wallet";
 import useStore from "../../hooks/useStore";
 import setupProtectedRoute from "../../utils/setupProtectedRoute";
 import toasts from "../../utils/toasts";
-import NoneFound from "../../components/Layout/NoneFound";
-import TransactionTile from "../../components/Wallet/TransactionTile";
-import AddMoneyTransactionModal from "../../components/Wallet/AddMoneyTranactionModal";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const TransactionsSection = styled(HStack)`
 	align-items: flex-start;
@@ -68,6 +69,12 @@ const Wallet = ({}) => {
 		isOpen: showAddMoneyToWalletModal,
 		onOpen: openAddMoneyToWalletModal,
 		onClose: closeAddMoneyToWalletModal,
+	} = useDisclosure();
+
+	const {
+		isOpen: showTransferMoneyToWalletModal,
+		onOpen: openTransferMoneyToWalletModal,
+		onClose: closeTransferMoneyToWalletModal,
 	} = useDisclosure();
 
 	const [walletInfo, setWalletInfo] = useState(null);
@@ -198,7 +205,7 @@ const Wallet = ({}) => {
 									<Button
 										colorScheme="orange"
 										variant="outline"
-										onClick={() => window.alert("Coming Soon")}
+										onClick={openTransferMoneyToWalletModal}
 										rightIcon={<BiTransfer size="1.25rem" />}
 									>
 										Transfer Money
@@ -217,6 +224,10 @@ const Wallet = ({}) => {
 							<AddMoneyTransactionModal
 								isOpen={showAddMoneyToWalletModal}
 								onClose={closeAddMoneyToWalletModal}
+							/>
+							<TransferMoneyModal
+								isOpen={showTransferMoneyToWalletModal}
+								onClose={closeTransferMoneyToWalletModal}
 							/>
 							{transactions.length ? (
 								transactions.map((transaction: Transaction) => (
