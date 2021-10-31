@@ -27,7 +27,9 @@ import { Transaction } from "../../@types";
 import ContentWrapper from "../../components/Layout/ContentWrapper";
 import FullPageLoader from "../../components/Layout/FullPageLoader";
 
-import { getWalletRef, getWalletTransactions } from "../../API";
+import { getWalletRef } from "../../API";
+import { getWalletTransactions } from "../../API/wallet";
+
 import useStore from "../../hooks/useStore";
 import setupProtectedRoute from "../../utils/setupProtectedRoute";
 import toasts from "../../utils/toasts";
