@@ -54,6 +54,7 @@ export const getWalletRef = (userId: string) =>
 
 export const getUserByPhoneOrEmail = async (
 	userIdentifier: string,
+	userIdsToExclude: string[],
 	callback: (errorMessage: string | null, userList?: any[]) => any
 ) => {
 	try {
@@ -74,13 +75,19 @@ export const getUserByPhoneOrEmail = async (
 			.limit(2)
 			.get();
 		for (let user of usersByPhone.docs) {
-			if (!(user.id in usersAlreadyMapped)) {
+			if (
+				!(user.id in usersAlreadyMapped) &&
+				!userIdsToExclude.includes(user.id)
+			) {
 				usersAlreadyMapped[user.id] = true;
 				options.push({ id: user.id, ...user.data() });
 			}
 		}
 		for (let user of usersByEmail.docs) {
-			if (!(user.id in usersAlreadyMapped)) {
+			if (
+				!(user.id in usersAlreadyMapped) &&
+				!userIdsToExclude.includes(user.id)
+			) {
 				usersAlreadyMapped[user.id] = true;
 				options.push({ id: user.id, ...user.data() });
 			}

@@ -1,33 +1,72 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Button, Input } from "@chakra-ui/react";
-import { MdSend } from "react-icons/md";
-
 import {
-	createAddMoneyToWalletTransaction,
-	createWalletMoneyTransferTransaction,
-} from "../../API/wallet";
+	Button,
+	Input,
+	Box,
+	HStack,
+	IconButton,
+	VStack,
+	Avatar,
+	Text,
+} from "@chakra-ui/react";
+import { MdSend } from "react-icons/md";
+import { FiUsers } from "react-icons/fi";
+import { SearchIcon } from "@chakra-ui/icons";
 
 import ReusableModal from "../Modal";
+import NoneFound from "../Layout/NoneFound";
+
+import { createWalletMoneyTransferTransaction } from "../../API/wallet";
+import { getUserByPhoneOrEmail } from "../../API";
+import useStore from "../../hooks/useStore";
 import toasts from "../../utils/toasts";
 
 const TransferMoneyModal = ({ isOpen, onClose }) => {
 	const router = useRouter();
+
+	const stateUser = useStore((state) => state.user);
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [amountToTransfer, setAmountToTransfer]: [
 		string | number,
 		(any) => any
 	] = useState("");
-	const [userToTransferMoneyTo, setUserToTransferMoneyTo] = useState("");
+
+	const [userToTransferToIdentifier, setUserToTransferToIdentifier] =
+		useState("");
+	const [hasFetchedUserOptionsOnce, setHasFetchedUserOptionsOnce] =
+		useState(false);
+	const [userOptions, setUserOptions] = useState([]);
+	const [userIdToTransferMoneyTo, setUserIdToTransferMoneyTo] = useState("");
+
+	const searchForUsers = () => {
+		setIsLoading(true);
+		setUserIdToTransferMoneyTo("");
+		getUserByPhoneOrEmail(
+			userToTransferToIdentifier,
+			[stateUser.uid],
+			(error, userListFetched) => {
+				setIsLoading(false);
+				setHasFetchedUserOptionsOnce(true);
+				if (error) return toasts.generateError(error);
+				setUserOptions(userListFetched || []);
+			}
+		);
+	};
+
+	const selectUser = (userId) =>
+		setUserIdToTransferMoneyTo(
+			userId === userIdToTransferMoneyTo ? null : userId
+		);
 
 	const startAddMoneyTransactionProcess = () => {
-		if (!amountToTransfer || !userToTransferMoneyTo) return;
+		if (!amountToTransfer || !userIdToTransferMoneyTo) return;
 
 		setIsLoading(true);
 		createWalletMoneyTransferTransaction(
 			Number(amountToTransfer) * 100, // Paise for backend to process
-			userToTransferMoneyTo,
+			userIdToTransferMoneyTo,
 			(error, response) => {
 				setIsLoading(false);
 				if (error) return toasts.generateError(error);
@@ -59,20 +98,83 @@ const TransferMoneyModal = ({ isOpen, onClose }) => {
 				</Button>
 			}
 		>
-			<Input
-				type="text"
-				placeholder="Email or Phone of User to Transfer To"
-				onChange={(e) => {
-					e.persist();
-					setUserToTransferMoneyTo(e.target.value);
-				}}
-				required
-				mb={5}
-			/>
+			<HStack mb={5}>
+				<Input
+					type="text"
+					placeholder="Email or Phone of User to Transfer To"
+					onChange={(e) => {
+						e.persist();
+						setUserToTransferToIdentifier(e.target.value);
+					}}
+					value={userToTransferToIdentifier}
+					flex="9"
+					required
+					disabled={isLoading}
+				/>
+				<IconButton
+					icon={<SearchIcon />}
+					colorScheme="green"
+					variant="ghost"
+					aria-label="Search Users"
+					onClick={searchForUsers}
+					isLoading={isLoading}
+				/>
+			</HStack>
+			{hasFetchedUserOptionsOnce ? (
+				userOptions?.length ? (
+					<VStack spacing={5} my={5}>
+						{userOptions.map((user) => (
+							<Box
+								key={user.id || user.uid}
+								onClick={() => selectUser(user.id)}
+								shadow="md"
+								p={3}
+								borderRadius="0.25rem"
+								borderWidth={1}
+								cursor="pointer"
+								width="100%"
+								title={
+									user.id === userIdToTransferMoneyTo
+										? "Money will be transferred to this user"
+										: user.displayName
+								}
+								border={
+									user.id === userIdToTransferMoneyTo
+										? "dashed green"
+										: "1px solid #cfcfcf"
+								}
+							>
+								<HStack>
+									<Box>
+										<Avatar name={user.displayName} src={user.photoURL} />
+									</Box>
+									<Box flex="8">
+										<Text fontSize="md" fontWeight={500}>
+											{user?.displayName}
+										</Text>
+										<Text fontSize="sm" color="gray">
+											{user.phoneNumber} {user.email}
+										</Text>
+									</Box>
+								</HStack>
+							</Box>
+						))}
+					</VStack>
+				) : (
+					<NoneFound
+						label="No Users Found"
+						icon={() => <FiUsers size="3.5rem" color="gray" />}
+					/>
+				)
+			) : (
+				""
+			)}
 			<Input
 				type="number"
 				placeholder="Amount To Transfer in ₹ (Ex: 1500)"
 				step={0.01}
+				disabled={isLoading}
+				value={amountToTransfer}
 				onChange={(e) => {
 					e.persist();
 					setAmountToTransfer(Number(e.target.value) || "");
