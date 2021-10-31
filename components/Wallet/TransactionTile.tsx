@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TimeIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, Stat, StatNumber, Tooltip, Text } from "@chakra-ui/react";
+import { Box, Stat, StatNumber, Tooltip, Text, VStack } from "@chakra-ui/react";
 import { Transaction } from "../../@types";
 
 import { IoCheckmarkDone } from "react-icons/io5";
@@ -38,8 +38,6 @@ const TransactionTile = ({ transaction }: TransactionTileProps) => {
 					<Box
 						p={5}
 						mb={10}
-						display="flex"
-						alignItems="center"
 						shadow="md"
 						borderRadius="0.25rem"
 						border={
@@ -48,40 +46,46 @@ const TransactionTile = ({ transaction }: TransactionTileProps) => {
 								: "1px solid #cfcfcf"
 						}
 					>
-						<Box>
-							{transaction.amount > 0 ? (
-								<TriangleUpIcon color="green.600" />
-							) : (
-								<TriangleDownIcon color="red.600" />
-							)}
-						</Box>
-						<Stat flex="5" minWidth="50%">
-							<StatNumber ml={5}>
-								₹ {Number(transaction.amount / 100).toFixed(2)}
-							</StatNumber>
-						</Stat>
-						<Box
-							flex="4"
-							minWidth="40%"
-							display="flex"
-							justifyContent="flex-end"
-						>
-							{transaction.status === "paid" ? (
-								<IoCheckmarkDone size="1.5rem" color="green" />
-							) : transaction.status === "pending" ? (
-								<BsClockHistory size="1.5rem" color="gray" />
-							) : (
-								<MdClear size="1.5rem" color="gray" />
-							)}
-						</Box>
-					</Box>
-					<br />
-					<Box width="100%" p={5} pt={0}>
-						<Text fontSize="sm" colorScheme="gray">
-							<TimeIcon />{" "}
-							{transaction?.createdAt?.toDate?.()?.toDateString?.()}{" "}
-							{transaction?.createdAt?.toDate?.()?.toTimeString?.()}
-						</Text>
+						<VStack>
+							<Box display="flex" alignItems="center" width="100%">
+								<Box>
+									{transaction.amount > 0 ? (
+										<TriangleUpIcon color="green.600" />
+									) : (
+										<TriangleDownIcon color="red.600" />
+									)}
+								</Box>
+								<Stat flex="5" minWidth="50%">
+									<StatNumber ml={5}>
+										₹ {Number(transaction.amount / 100).toFixed(2)}
+									</StatNumber>
+								</Stat>
+								<Box
+									flex="4"
+									minWidth="40%"
+									display="flex"
+									justifyContent="flex-end"
+								>
+									{transaction.status === "paid" ? (
+										<IoCheckmarkDone size="1.5rem" color="green" />
+									) : transaction.status === "pending" ? (
+										<BsClockHistory size="1.5rem" color="gray" />
+									) : (
+										<MdClear size="1.5rem" color="gray" />
+									)}
+								</Box>
+							</Box>
+							<Box width="100%">
+								<Text fontSize="sm" color="gray">
+									<TimeIcon />{" "}
+									{transaction?.createdAt?.toDate?.()?.toDateString?.()}{" "}
+									{transaction?.createdAt
+										?.toDate?.()
+										?.toTimeString?.()
+										.slice(0, 8)}
+								</Text>
+							</Box>
+						</VStack>
 					</Box>
 				</a>
 			</Link>
