@@ -28,9 +28,9 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 
 	function initializePayment() {
 		if (
-			orderInfo.status !== "created" ||
-			transactionInfo.status === "paid" ||
-			transactionInfo.status === "failed"
+			orderInfo?.status !== "created" ||
+			transactionInfo?.status === "paid" ||
+			transactionInfo?.status === "failed"
 		)
 			return setErrorMessage(
 				"Payment process has already taken place. Please check back in some time."

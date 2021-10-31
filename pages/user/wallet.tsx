@@ -1,9 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import styled from "@emotion/styled";
 import {
 	Container,
 	Stat,
 	StatLabel,
+	Button,
 	StatNumber,
 	StatHelpText,
 	StatArrow,
@@ -12,9 +14,12 @@ import {
 	Center,
 	HStack,
 	Box,
+	useDisclosure,
 } from "@chakra-ui/react";
 import { FaMoneyCheck } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
+import { GiPayMoney } from "react-icons/gi";
+import { BiTransfer } from "react-icons/bi";
+
 import { Transaction } from "../../@types";
 
 import ContentWrapper from "../../components/Layout/ContentWrapper";
@@ -26,6 +31,7 @@ import setupProtectedRoute from "../../utils/setupProtectedRoute";
 import toasts from "../../utils/toasts";
 import NoneFound from "../../components/Layout/NoneFound";
 import TransactionTile from "../../components/Wallet/TransactionTile";
+import AddMoneyTransactionModal from "../../components/Wallet/AddMoneyTranactionModal";
 
 const TransactionsSection = styled(HStack)`
 	align-items: flex-start;
@@ -52,6 +58,12 @@ const TransactionListImageContainer = styled(Center)`
 
 const Wallet = ({}) => {
 	const user = useStore((state) => state.user);
+
+	const {
+		isOpen: showAddMoneyToWalletModal,
+		onOpen: openAddMoneyToWalletModal,
+		onClose: closeAddMoneyToWalletModal,
+	} = useDisclosure();
 
 	const [walletInfo, setWalletInfo] = useState(null);
 	const walletRealtimeSubscriptionRef = useRef(() => null);
@@ -160,6 +172,32 @@ const Wallet = ({}) => {
 					<br />
 					<TransactionsSection>
 						<TransactionList minWidth="70%">
+							{/* Add Money To Wallet and Money Transfer related */}
+							<Box textAlign="right" width="100%">
+								<HStack spacing={5} justifyContent="flex-end">
+									<Button
+										colorScheme="orange"
+										variant="outline"
+										onClick={() => window.alert("Coming Soon")}
+										rightIcon={<BiTransfer size="1.25rem" />}
+									>
+										Transfer Money
+									</Button>
+									<Button
+										colorScheme="green"
+										variant="solid"
+										onClick={openAddMoneyToWalletModal}
+										leftIcon={<GiPayMoney size="1.25rem" />}
+									>
+										Add Money
+									</Button>
+								</HStack>
+							</Box>
+							<br />
+							<AddMoneyTransactionModal
+								isOpen={showAddMoneyToWalletModal}
+								onClose={closeAddMoneyToWalletModal}
+							/>
 							{transactions.length ? (
 								transactions.map((transaction: Transaction) => (
 									<TransactionTile
