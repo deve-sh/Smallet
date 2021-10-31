@@ -51,3 +51,43 @@ export const getWalletDetails = async (
 
 export const getWalletRef = (userId: string) =>
 	db.collection("wallets").doc(userId);
+
+export const getUserByPhoneOrEmail = async (
+	userIdentifier: string,
+	callback: (errorMessage: string | null, userList?: any[]) => any
+) => {
+	try {
+		const usersAlreadyMapped = {};
+		const options = [];
+
+		const phoneIdentifier = userIdentifier?.startsWith("+")
+			? userIdentifier
+			: "+91" + userIdentifier;
+		const usersByPhone = await db
+			.collection("users")
+			.where("phone", "==", phoneIdentifier)
+			.limit(2)
+			.get();
+		const usersByEmail = await db
+			.collection("users")
+			.where("email", "==", userIdentifier)
+			.limit(2)
+			.get();
+		for (let user of usersByPhone.docs) {
+			if (!(user.id in usersAlreadyMapped)) {
+				usersAlreadyMapped[user.id] = true;
+				options.push({ id: user.id, ...user.data() });
+			}
+		}
+		for (let user of usersByEmail.docs) {
+			if (!(user.id in usersAlreadyMapped)) {
+				usersAlreadyMapped[user.id] = true;
+				options.push({ id: user.id, ...user.data() });
+			}
+		}
+		return callback(null, options);
+	} catch (err) {
+		if (process.env.NODE_ENV !== "production") console.log(err);
+		return callback(err.message, null);
+	}
+};
