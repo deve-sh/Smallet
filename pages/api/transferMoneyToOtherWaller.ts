@@ -13,8 +13,10 @@ export default async function transferMoneyToOtherWallet(
 		});
 
 	try {
-		const { amount, userToTransferTo } = req.body; // amount -> Paise
+		let { amount, userToTransferTo } = req.body; // amount -> Paise
 		const { authorization } = req.headers;
+
+		amount = Number(amount) || 0;
 
 		if (!authorization || !amount || !userToTransferTo)
 			return error(400, "Invalid information.");
@@ -47,6 +49,9 @@ export default async function transferMoneyToOtherWallet(
 
 		if (!userFromWallet || !userToWallet)
 			return error(404, "Wallets not found");
+
+		if (Number(userFromWallet.balance) < Number(amount))
+			return error(400, "You don't have sufficient balance for transfer");
 
 		const batch = admin.firestore().batch();
 
