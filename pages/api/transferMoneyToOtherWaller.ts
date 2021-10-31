@@ -52,10 +52,14 @@ export default async function transferMoneyToOtherWallet(
 
 		batch.update(userFromWalletRef, {
 			balance: admin.firestore.FieldValue.increment(-amount),
+			nTransactions: admin.firestore.FieldValue.increment(1),
+			nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
 			updatedAt: new Date(),
 		});
 		batch.update(userToWalletRef, {
 			balance: admin.firestore.FieldValue.increment(amount),
+			nTransactions: admin.firestore.FieldValue.increment(1),
+			nSuccessfulTransactions: admin.firestore.FieldValue.increment(1),
 			updatedAt: new Date(),
 		});
 		batch.set(fromTransactionRef, {
@@ -83,6 +87,14 @@ export default async function transferMoneyToOtherWallet(
 			type: "money_transfer",
 			order: null,
 			partnerTransaction: fromTransactionRef.id,
+		});
+		batch.update(admin.firestore().collection("users").doc(userToTransferTo), {
+			nTransactions: admin.firestore.FieldValue.increment(1),
+			updatedAt: new Date(),
+		});
+		batch.update(admin.firestore().collection("users").doc(decodedToken.uid), {
+			nTransactions: admin.firestore.FieldValue.increment(1),
+			updatedAt: new Date(),
 		});
 
 		await batch.commit();
