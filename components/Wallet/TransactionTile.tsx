@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, Stat, StatNumber, Tooltip } from "@chakra-ui/react";
+import { TimeIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { Box, Stat, StatNumber, Tooltip, Text } from "@chakra-ui/react";
 import { Transaction } from "../../@types";
 
 import { IoCheckmarkDone } from "react-icons/io5";
@@ -74,6 +74,14 @@ const TransactionTile = ({ transaction }: TransactionTileProps) => {
 								<MdClear size="1.5rem" color="gray" />
 							)}
 						</Box>
+					</Box>
+					<br />
+					<Box width="100%" p={5} pt={0}>
+						<Text fontSize="sm" colorScheme="gray">
+							<TimeIcon />{" "}
+							{transaction?.createdAt?.toDate?.()?.toDateString?.()}{" "}
+							{transaction?.createdAt?.toDate?.()?.toTimeString?.()}
+						</Text>
 					</Box>
 				</a>
 			</Link>
