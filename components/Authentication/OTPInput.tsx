@@ -15,11 +15,11 @@ const OTPInputsWrapper = styled.div`
 
 const OTPInputField = styled.input`
 	border: 0.1rem solid var(--bordergrey);
-	margin: 0 0.5rem;
+	margin: 0 0.25rem;
 	padding: 1rem;
 	text-align: center;
 	border-radius: 0.25rem;
-	min-width: 2rem;
+	min-width: 3.25rem;
 	max-width: 4rem;
 
 	&:active,
