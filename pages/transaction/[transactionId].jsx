@@ -1,6 +1,7 @@
 import Head from "next/head";
 import {
 	Container,
+	Box,
 	Stat,
 	StatLabel,
 	StatNumber,
@@ -8,8 +9,12 @@ import {
 	StatArrow,
 	Divider,
 	Text,
+	HStack,
 } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
+import { IoCheckmarkDone } from "react-icons/io5";
+import { MdClear } from "react-icons/md";
+import { BsClockHistory } from "react-icons/bs";
 
 import db from "../../firebase/firestore";
 
@@ -38,8 +43,23 @@ const TransactionPage = ({
 			<Stat>
 				<StatLabel fontSize="1.125rem">Amount</StatLabel>
 				<StatNumber fontSize="3.5rem">
-					{Number(transactionInfo.amount) < 0 ? "-" : ""}₹
-					{Number(Math.abs(parseInt(transactionInfo.amount)) / 100).toFixed(2)}
+					<HStack>
+						<>
+							{Number(transactionInfo.amount) < 0 ? "-" : ""}₹
+							{Number(Math.abs(parseInt(transactionInfo.amount)) / 100).toFixed(
+								2
+							)}
+							<Box ml={3} title={transactionInfo?.status}>
+								{transactionInfo?.status === "paid" ? (
+									<IoCheckmarkDone size="2.5rem" color="green" />
+								) : transactionInfo?.status === "pending" ? (
+									<BsClockHistory size="2.5rem" color="mustard" />
+								) : (
+									<MdClear size="2.5rem" color="red" />
+								)}
+							</Box>
+						</>
+					</HStack>
 				</StatNumber>
 				<StatHelpText>
 					<>
