@@ -1,6 +1,13 @@
 import { Box, HStack, Avatar, Text } from "@chakra-ui/react";
 
-const UserTile = ({ user, onClick, title, border }) => {
+const UserTile = ({
+	user,
+	onClick = undefined,
+	title = undefined,
+	border = undefined,
+	width = undefined,
+	maxWidth = undefined,
+}) => {
 	return (
 		<Box
 			onClick={onClick}
@@ -9,7 +16,8 @@ const UserTile = ({ user, onClick, title, border }) => {
 			borderRadius="0.25rem"
 			borderWidth={1}
 			cursor="pointer"
-			width="100%"
+			width={width || "100%"}
+			maxWidth={maxWidth || "100%"}
 			title={title}
 			border={border}
 		>

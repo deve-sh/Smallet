@@ -6,11 +6,13 @@ import styled from "@emotion/styled";
 import { Container, Text, Image } from "@chakra-ui/react";
 
 import db from "../firebase/firestore";
+import { getToken } from "../firebase/authentication";
+
 import useStore from "../hooks/useStore";
+
 import setupProtectedRoute from "../utils/setupProtectedRoute";
 import toasts from "../utils/toasts";
 import request from "../utils/request";
-import { getToken } from "../firebase/authentication";
 
 import Error from "../components/Layout/Error";
 
