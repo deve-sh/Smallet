@@ -14,6 +14,8 @@ import {
 	Center,
 	HStack,
 	Box,
+	Tooltip,
+	// For Modals
 	useDisclosure,
 } from "@chakra-ui/react";
 import { FaMoneyCheck } from "react-icons/fa";
@@ -161,11 +163,19 @@ const Wallet = ({}) => {
 								{parseInt(walletInfo.nTransactions)}
 							</StatNumber>
 							<StatHelpText fontSize="1.125rem">
-								<StatArrow type="increase" color="green.700" />
-								{walletInfo.nSuccessfulTransactions || 0}
+								<Tooltip label="Successful Transactions">
+									<>
+										<StatArrow type="increase" color="green.700" />
+										{walletInfo.nSuccessfulTransactions || 0}
+									</>
+								</Tooltip>
 								&nbsp;&nbsp;
-								<StatArrow type="decrease" color="red.700" />
-								{walletInfo.nFailedTransactions || 0}
+								<Tooltip label="Failed Transactions">
+									<>
+										<StatArrow type="decrease" color="red.700" />
+										{walletInfo.nFailedTransactions || 0}
+									</>
+								</Tooltip>
 							</StatHelpText>
 						</Stat>
 					</StatGroup>
