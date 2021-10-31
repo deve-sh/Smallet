@@ -65,7 +65,7 @@ export const getUserByPhoneOrEmail = async (
 			: "+91" + userIdentifier;
 		const usersByPhone = await db
 			.collection("users")
-			.where("phone", "==", phoneIdentifier)
+			.where("phoneNumber", "==", phoneIdentifier)
 			.limit(2)
 			.get();
 		const usersByEmail = await db
