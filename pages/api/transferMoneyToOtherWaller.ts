@@ -106,7 +106,10 @@ export default async function transferMoneyToOtherWallet(
 
 		return res
 			.status(200)
-			.json({ message: "Successfully transferred money to user's wallet." });
+			.json({
+				message: "Successfully transferred money to user's wallet.",
+				success: true,
+			});
 	} catch (err) {
 		console.log(err);
 		return error(500, err.message);
