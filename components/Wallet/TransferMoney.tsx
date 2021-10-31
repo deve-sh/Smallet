@@ -1,21 +1,13 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import {
-	Button,
-	Input,
-	Box,
-	HStack,
-	IconButton,
-	VStack,
-	Avatar,
-	Text,
-} from "@chakra-ui/react";
+import { Button, Input, HStack, IconButton, VStack } from "@chakra-ui/react";
 import { MdSend } from "react-icons/md";
 import { FiUsers } from "react-icons/fi";
 import { SearchIcon } from "@chakra-ui/icons";
 
 import ReusableModal from "../Modal";
 import NoneFound from "../Layout/NoneFound";
+import UserTile from "../Profile/UserTile";
 
 import { createWalletMoneyTransferTransaction } from "../../API/wallet";
 import { getUserByPhoneOrEmail } from "../../API";
@@ -124,15 +116,10 @@ const TransferMoneyModal = ({ isOpen, onClose }) => {
 				userOptions?.length ? (
 					<VStack spacing={5} my={5}>
 						{userOptions.map((user) => (
-							<Box
-								key={user.id || user.uid}
+							<UserTile
+								user={user}
 								onClick={() => selectUser(user.id)}
-								shadow="md"
-								p={3}
-								borderRadius="0.25rem"
-								borderWidth={1}
-								cursor="pointer"
-								width="100%"
+								key={user.id || user.uid}
 								title={
 									user.id === userIdToTransferMoneyTo
 										? "Money will be transferred to this user"
@@ -143,21 +130,7 @@ const TransferMoneyModal = ({ isOpen, onClose }) => {
 										? "dashed green"
 										: "1px solid #cfcfcf"
 								}
-							>
-								<HStack>
-									<Box>
-										<Avatar name={user.displayName} src={user.photoURL} />
-									</Box>
-									<Box flex="8">
-										<Text fontSize="md" fontWeight={500}>
-											{user?.displayName}
-										</Text>
-										<Text fontSize="sm" color="gray">
-											{user.phoneNumber} {user.email}
-										</Text>
-									</Box>
-								</HStack>
-							</Box>
+							/>
 						))}
 					</VStack>
 				) : (
