@@ -1,5 +1,5 @@
 /* Dedicated Page to make wallet payments. */
-
+import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Script from "next/script";
 import styled from "@emotion/styled";
@@ -19,6 +19,8 @@ const WalletImage = styled(Image)`
 `;
 
 const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
+	const router = useRouter();
+
 	const user = useStore((state) => state.user);
 	const setUser = useStore((state) => state.setUser);
 
@@ -67,6 +69,7 @@ const MakeWalletPayment = ({ error, orderInfo, transactionInfo }) => {
 						});
 						setTransactionState("successful");
 						toasts.generateSuccess("Payment Successful");
+						router.push("/user/wallet");
 					}
 				);
 			},
