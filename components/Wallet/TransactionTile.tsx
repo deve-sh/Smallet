@@ -47,6 +47,13 @@ const TransactionTile = ({ transaction }: TransactionTileProps) => {
 						}
 					>
 						<VStack>
+							{transaction.title ? (
+								<Box>
+									<Text color="gray">{transaction.title}</Text>
+								</Box>
+							) : (
+								""
+							)}
 							<Box display="flex" alignItems="center" width="100%">
 								<Box>
 									{transaction.amount > 0 ? (

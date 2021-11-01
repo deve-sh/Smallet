@@ -44,7 +44,9 @@ const TransactionPage = ({
 				<title>Smallet - Transaction</title>
 			</Head>
 			<Stat>
-				<StatLabel fontSize="1.125rem">Amount</StatLabel>
+				<StatLabel fontSize="1.125rem">
+					{transaction.title || "Amount"}
+				</StatLabel>
 				<StatNumber fontSize="3.5rem">
 					<HStack>
 						<>
