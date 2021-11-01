@@ -45,7 +45,7 @@ const TransactionPage = ({
 			</Head>
 			<Stat>
 				<StatLabel fontSize="1.125rem">
-					{transaction.title || "Amount"}
+					{transactionInfo.title || "Amount"}
 				</StatLabel>
 				<StatNumber fontSize="3.5rem">
 					<HStack>
@@ -123,7 +123,14 @@ const TransactionPage = ({
 			) : (
 				""
 			)}
-			{transactionInfo?.status === "pending" ? "None Available" : ""}
+			{transactionInfo?.description ? (
+				<>Description: {transactionInfo.description}</>
+			) : (
+				""
+			)}
+			{!transactionInfo?.description && transactionInfo?.status === "pending"
+				? "None Available"
+				: ""}
 		</Container>
 	);
 };
