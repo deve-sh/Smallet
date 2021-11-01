@@ -20,11 +20,19 @@ import useStore from "../hooks/useStore";
 const HomeHeroSection = styled(Container)`
 	padding-top: 1rem;
 	min-height: 90vh;
+	@media (max-width: 768px) {
+		display: flex;
+		align-items: center;
+		padding-top: 0;
+	}
 `;
 
 const HomeHeroImage = styled(Image)`
 	max-width: 375px;
 	margin: 0 auto;
+	@media (max-width: 768px) {
+		max-width: 95%;
+	}
 `;
 
 const HomeSecondSection = styled(HomeHeroSection)`
@@ -92,7 +100,7 @@ export default function Home({ openLoginModal = () => null }) {
 
 	return (
 		<>
-			<HomeHeroSection centerContent>
+			<HomeHeroSection>
 				<ContentWrapper centerContent>
 					<HomeHeroImage src="/images/homehero.svg" alt="Guy With Phone" />
 					<Heading my={3} mt={5}>
