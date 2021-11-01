@@ -25,6 +25,9 @@ export default async function transferMoneyToOtherWallet(
 		const decodedToken = await validateIdToken(authorization);
 		if (!decodedToken) return error(401, "Unauthorized");
 
+		if (decodedToken.uid === userToTransferTo)
+			return error(401, "You can't transfer money to yourself.");
+
 		const userFromWalletRef = admin
 			.firestore()
 			.collection("wallets")
