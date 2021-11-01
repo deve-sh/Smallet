@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Button, Input } from "@chakra-ui/react";
+import { Button, Input, Textarea } from "@chakra-ui/react";
 import { MdSend } from "react-icons/md";
 
 import { createAddMoneyToWalletTransaction } from "../../API/wallet";
@@ -12,6 +12,9 @@ const AddMoneyTransactionModal = ({ isOpen, onClose }) => {
 	const router = useRouter();
 
 	const [isLoading, setIsLoading] = useState(false);
+
+	const [transactionTitle, setTransactionTitle] = useState("");
+	const [transactionDescription, setTransactionDescription] = useState("");
 	const [amountToAdd, setAmountToAdd]: [string | number, (any) => any] =
 		useState("");
 
@@ -20,7 +23,11 @@ const AddMoneyTransactionModal = ({ isOpen, onClose }) => {
 
 		setIsLoading(true);
 		createAddMoneyToWalletTransaction(
-			Number(amountToAdd) * 100, // Paise for backend to process
+			{
+				amount: Number(amountToAdd) * 100, // Paise for backend to process
+				title: transactionTitle,
+				description: transactionDescription,
+			},
 			(error, response) => {
 				setIsLoading(false);
 				if (error) return toasts.generateError(error);
@@ -59,7 +66,31 @@ const AddMoneyTransactionModal = ({ isOpen, onClose }) => {
 					e.persist();
 					setAmountToAdd(Number(e.target.value) || "");
 				}}
+				borderColor="teal.500"
+				borderWidth={2}
+				mb={3}
 				required
+				isRequired
+			/>
+			<Input
+				type="text"
+				placeholder="Transaction Title, Ex: Add money for October"
+				onChange={(e) => {
+					e.persist();
+					setTransactionTitle(e.target.value);
+				}}
+				value={transactionTitle}
+				mb={3}
+			/>
+			<Textarea
+				value={transactionDescription}
+				onChange={(e) => {
+					e.persist();
+					setTransactionDescription(e.target.value);
+				}}
+				placeholder="Some description (Optional)"
+				size="sm"
+				borderRadius="0.375rem"
 			/>
 		</ReusableModal>
 	);

@@ -3,14 +3,18 @@ import { getToken } from "../firebase/authentication";
 import db from "../firebase/firestore";
 
 export const createAddMoneyToWalletTransaction = async (
-	amount: number,
+	transactionInfo: { amount: number; title?: string; description?: string },
 	callback: (errorMessage: string | null, orderInfo?: any) => any
 ) => {
 	try {
-		if (!amount) return callback("Amount invalid");
+		if (!transactionInfo.amount) return callback("Amount invalid");
 		request(
 			"/api/createWalletAddMoneyTransaction",
-			{ amount },
+			{
+				amount: transactionInfo.amount,
+				title: transactionInfo.title,
+				description: transactionInfo.description,
+			},
 			{ headers: { authorization: await getToken() } },
 			"post",
 			(error, response) => {
