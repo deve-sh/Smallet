@@ -3,10 +3,7 @@
  */
 
 import dynamic from "next/dynamic";
-import {
-	ChakraProvider,
-	useDisclosure as useToggleableModal,
-} from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 import GlobalStyles from "./GlobalStyles";
 import Header from "./Header";
@@ -16,16 +13,17 @@ import useStore from "../../hooks/useStore";
 
 const LoginModal = dynamic(() => import("../Authentication/LoginModal"));
 
-const AppLayout = ({ children, logoutUser = () => null }) => {
+const AppLayout = ({
+	children,
+	logoutUser = () => null,
+	showLoginModal = false,
+	openLoginModal = () => null,
+	closeLoginModal = () => null,
+}) => {
 	const isDarkModeActive = useStore((store) => store.isDarkModeActive);
 
 	// User Authentication
 	const stateUser = useStore((store) => store.user);
-	const {
-		isOpen: showLoginModal,
-		onOpen: openLoginModal,
-		onClose: closeLoginModal,
-	} = useToggleableModal();
 
 	return (
 		<ChakraProvider>

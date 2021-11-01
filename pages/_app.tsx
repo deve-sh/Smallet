@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { useDisclosure as useToggleableModal } from "@chakra-ui/react";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,6 +24,13 @@ const App = ({ Component: Page, pageProps }) => {
 
 	const setUser: Function = useStore((store) => store.setUser);
 	const isLoading: boolean = useStore((store) => store.isLoading);
+
+	// Login Modal for Layout
+	const {
+		isOpen: showLoginModal,
+		onOpen: openLoginModal,
+		onClose: closeLoginModal,
+	} = useToggleableModal();
 
 	useEffect(() => {
 		// Mount Service Worker
@@ -92,10 +100,15 @@ const App = ({ Component: Page, pageProps }) => {
 				<meta name="author" content="Devesh Kumar" />
 				<meta name="HandheldFriendly" content="True" />
 			</Head>
-			<AppLayout logoutUser={logoutUser}>
+			<AppLayout
+				logoutUser={logoutUser}
+				showLoginModal={showLoginModal}
+				openLoginModal={openLoginModal}
+				closeLoginModal={closeLoginModal}
+			>
 				<ToastContainer />
 				{isLoading && "Loading"}
-				<Page {...pageProps} />
+				<Page {...pageProps} openLoginModal={openLoginModal} />
 			</AppLayout>
 		</>
 	);
