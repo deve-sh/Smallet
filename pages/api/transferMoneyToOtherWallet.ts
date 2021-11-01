@@ -56,6 +56,13 @@ export default async function transferMoneyToOtherWallet(
 		if (Number(userFromWallet.balance) < Number(amount))
 			return error(400, "You don't have sufficient balance for transfer");
 
+		const fromUser = (
+			await admin.firestore().collection("users").doc(decodedToken.uid).get()
+		).data();
+		const toUser = (
+			await admin.firestore().collection("users").doc(userToTransferTo).get()
+		).data();
+
 		const batch = admin.firestore().batch();
 
 		batch.update(userFromWalletRef, {
@@ -84,6 +91,10 @@ export default async function transferMoneyToOtherWallet(
 			type: "money_transfer",
 			order: null,
 			partnerTransaction: toTransactionRef.id,
+			title: `Transfer of ₹${Number(Math.abs(amount) / 100).toFixed(2)} to ${
+				toUser?.displayName || toUser?.phoneNumber || toUser?.email
+			}.`,
+			description: "",
 		});
 		batch.set(toTransactionRef, {
 			from: decodedToken.uid,
@@ -97,6 +108,10 @@ export default async function transferMoneyToOtherWallet(
 			type: "money_transfer",
 			order: null,
 			partnerTransaction: fromTransactionRef.id,
+			title: `Transfer of ₹${Number(Math.abs(amount) / 100).toFixed(2)} from ${
+				fromUser?.displayName || fromUser?.phoneNumber || fromUser?.email
+			}.`,
+			description: "",
 		});
 		batch.update(admin.firestore().collection("users").doc(userToTransferTo), {
 			nTransactions: admin.firestore.FieldValue.increment(1),

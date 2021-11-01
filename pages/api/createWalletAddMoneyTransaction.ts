@@ -14,7 +14,7 @@ export default async function createWalletAddMoneyTransaction(
 		});
 
 	try {
-		const { amount } = req.body; // amount -> Paise
+		const { amount, title = "", description = "" } = req.body; // amount -> Paise
 		const { authorization } = req.headers;
 
 		if (!authorization || !amount) return error(400, "Invalid information.");
@@ -55,6 +55,8 @@ export default async function createWalletAddMoneyTransaction(
 				status: "pending",
 				type: "wallet_topup",
 				order: order.id,
+				title,
+				description,
 			});
 			batch.set(orderRef, {
 				...order,
