@@ -58,7 +58,7 @@ For a snippet of the process:
 
 - Provide the merchant an API Route to create a purchase order:
 
-```curl
+```bash
 curl -XPOST -H
 'Authorization: <apiKey>-<apiKeySecret>' -H "Content-type: application/json" -d '
     {
