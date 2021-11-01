@@ -74,6 +74,10 @@ const GlobalStyles = ({ darkMode = false }) => (
 					margin-inline-end: 0;
 				}
 			}
+
+			.react-tel-input .special-label {
+				display: none;
+			}
 		`}
 	/>
 );
