@@ -33,6 +33,13 @@ const TransferMoneyModal = ({ isOpen, onClose }) => {
 	const [userIdToTransferMoneyTo, setUserIdToTransferMoneyTo] = useState("");
 
 	const searchForUsers = () => {
+		if (
+			!userToTransferToIdentifier ||
+			userToTransferToIdentifier === stateUser.phoneNumber ||
+			userToTransferToIdentifier === stateUser.email
+		)
+			return;
+
 		setIsLoading(true);
 		setUserIdToTransferMoneyTo("");
 		getUserByPhoneOrEmail(
