@@ -75,9 +75,15 @@ const TransactionPage = ({
 						/>{" "}
 						Transaction ID: {transactionId}
 						<br />
-						<InfoIcon mr={2} />
-						{orderInfo ? `Order ID: ${transactionInfo?.order}` : ""}
-						<br />
+						{transactionInfo?.order ? (
+							<>
+								<InfoIcon mr={2} />
+								{orderInfo ? `Order ID: ${transactionInfo?.order}` : ""}
+								<br />
+							</>
+						) : (
+							""
+						)}
 						<TimeIcon mr={2} />
 						{new Date(transactionInfo.createdAt).toDateString()}{" "}
 						{new Date(transactionInfo.createdAt).toTimeString().slice(0, 8)}
@@ -109,6 +115,11 @@ const TransactionPage = ({
 			>
 				<WarningIcon /> &nbsp;More Information
 			</Text>
+			{transactionInfo?.paymentRequest ? (
+				<>Payment Request ID: {transactionInfo.paymentRequest}</>
+			) : (
+				""
+			)}
 			{transactionInfo?.status === "failed" &&
 			transactionInfo?.error?.description ? (
 				<Alert status="error">
