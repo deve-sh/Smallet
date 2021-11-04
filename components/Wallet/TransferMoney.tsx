@@ -66,6 +66,7 @@ const TransferMoneyModal = ({ isOpen, onClose }) => {
 		createWalletMoneyTransferTransaction(
 			Number(amountToTransfer) * 100, // Paise for backend to process
 			userIdToTransferMoneyTo,
+			null,
 			(error, response) => {
 				setIsLoading(false);
 				if (error) return toasts.generateError(error);
