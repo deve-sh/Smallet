@@ -23,7 +23,7 @@ const PaymentRequestCard = (props: PaymentRequestCardProps) => {
 				>
 					<Box flex={4}>
 						<Text fontWeight="500" fontSize="xl">
-							₹{props.request.amount}
+							₹{Number(Math.abs(props.request.amount) / 100).toFixed(2)}
 						</Text>
 						<Text color="gray" fontSize="xs">
 							<TimeIcon />{" "}
