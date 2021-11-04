@@ -68,66 +68,70 @@ const Header = ({ openLoginModal = () => null, logoutUser = () => null }) => {
 					</Link>
 				</Left>
 				<Right>
-					<ButtonGroup spacing="3">
-						<IconButton
-							aria-label="Toggle Dark Mode"
-							colorScheme={isDarkModeActive ? "yellow" : "teal"}
-							variant="ghost"
-							onClick={toggleDarkModeForApp}
-						>
-							{isDarkModeActive ? <FaSun /> : <FaMoon />}
-						</IconButton>
-						{!stateUser ? (
-							<Button
-								colorScheme="teal"
-								variant="outline"
-								leftIcon={<LoginIcon size="1.375rem" />}
-								onClick={openLoginModal}
+					{typeof window !== "undefined" ? (
+						<ButtonGroup spacing="3">
+							<IconButton
+								aria-label="Toggle Dark Mode"
+								colorScheme={isDarkModeActive ? "yellow" : "teal"}
+								variant="ghost"
+								onClick={toggleDarkModeForApp}
 							>
-								Login
-							</Button>
-						) : (
-							<HStack spacing="0.5rem">
-								<UserNotifications />
-								<Link href="/user/wallet">
-									<a>
-										<IconButton
-											aria-label="Wallet"
-											colorScheme="teal"
-											variant="ghost"
-										>
-											<FaWallet />
-										</IconButton>
-									</a>
-								</Link>
-								<Link href="/user/profile">
-									<a>
-										<IconButton
-											aria-label="Profile"
-											colorScheme="teal"
-											variant="ghost"
-										>
-											<FaUserCircle />
-										</IconButton>
-									</a>
-								</Link>
+								{isDarkModeActive ? <FaSun /> : <FaMoon />}
+							</IconButton>
+							{!stateUser ? (
 								<Button
 									colorScheme="teal"
 									variant="outline"
-									className="logoutbutton"
-									leftIcon={<LogoutIcon size="1.375rem" />}
-									onClick={logoutUser}
+									leftIcon={<LoginIcon size="1.375rem" />}
+									onClick={openLoginModal}
 								>
-									<span
-										className="hideonsmall"
-										style={{ marginLeft: "0.5rem" }}
-									>
-										Logout
-									</span>
+									Login
 								</Button>
-							</HStack>
-						)}
-					</ButtonGroup>
+							) : (
+								<HStack spacing="0.5rem">
+									<UserNotifications />
+									<Link href="/user/wallet">
+										<a>
+											<IconButton
+												aria-label="Wallet"
+												colorScheme="teal"
+												variant="ghost"
+											>
+												<FaWallet />
+											</IconButton>
+										</a>
+									</Link>
+									<Link href="/user/profile">
+										<a>
+											<IconButton
+												aria-label="Profile"
+												colorScheme="teal"
+												variant="ghost"
+											>
+												<FaUserCircle />
+											</IconButton>
+										</a>
+									</Link>
+									<Button
+										colorScheme="teal"
+										variant="outline"
+										className="logoutbutton"
+										leftIcon={<LogoutIcon size="1.375rem" />}
+										onClick={logoutUser}
+									>
+										<span
+											className="hideonsmall"
+											style={{ marginLeft: "0.5rem" }}
+										>
+											Logout
+										</span>
+									</Button>
+								</HStack>
+							)}
+						</ButtonGroup>
+					) : (
+						""
+					)}
 				</Right>
 			</Container>
 		</AppHeader>
