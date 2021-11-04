@@ -13,13 +13,13 @@ export default async function transferMoneyToOtherWallet(
 		});
 
 	try {
-		let { amount, userToTransferTo } = req.body; // amount -> Paise
+		let { amount, userToTransferTo, paymentRequestId } = req.body; // amount -> Paise
 		const { authorization } = req.headers;
 
-		amount = Number(amount) || 0;
-
-		if (!authorization || !amount || !userToTransferTo)
+		if (!authorization || !paymentRequestId || !amount || !userToTransferTo)
 			return error(400, "Invalid information.");
+
+		amount = Number(amount) || 0;
 
 		// Get user details from token.
 		const decodedToken = await validateIdToken(authorization);
@@ -37,6 +37,19 @@ export default async function transferMoneyToOtherWallet(
 			.firestore()
 			.collection("wallets")
 			.doc(userToTransferTo);
+
+		let paymentRequestRef = null;
+
+		if (paymentRequestId) {
+			paymentRequestRef = admin
+				.firestore()
+				.collection("paymentrequests")
+				.doc(paymentRequestId);
+			const paymentRequestInfo = (await paymentRequestRef.get()).data();
+			if (!paymentRequestInfo)
+				return error(404, "Payment Request Info Not Found");
+			amount = Number(paymentRequestInfo.amount);
+		}
 
 		const userFromWallet = (await userFromWalletRef.get()).data();
 		const userToWallet = (await userFromWalletRef.get()).data();
@@ -65,6 +78,12 @@ export default async function transferMoneyToOtherWallet(
 
 		const batch = admin.firestore().batch();
 
+		if (paymentRequestRef) {
+			batch.update(paymentRequestRef, {
+				status: "paid",
+				updatedAt: new Date(),
+			});
+		}
 		batch.update(userFromWalletRef, {
 			balance: admin.firestore.FieldValue.increment(-amount),
 			nTransactions: admin.firestore.FieldValue.increment(1),
@@ -90,6 +109,7 @@ export default async function transferMoneyToOtherWallet(
 			status: "paid",
 			type: "money_transfer",
 			order: null,
+			paymentRequest: req.body.paymentRequestId,
 			partnerTransaction: toTransactionRef.id,
 			title: `Transfer of ₹${Number(Math.abs(amount) / 100).toFixed(2)} to ${
 				toUser?.displayName || toUser?.phoneNumber || toUser?.email
@@ -107,6 +127,7 @@ export default async function transferMoneyToOtherWallet(
 			status: "paid",
 			type: "money_transfer",
 			order: null,
+			paymentRequest: req.body.paymentRequestId,
 			partnerTransaction: fromTransactionRef.id,
 			title: `Transfer of ₹${Number(Math.abs(amount) / 100).toFixed(2)} from ${
 				fromUser?.displayName || fromUser?.phoneNumber || fromUser?.email
