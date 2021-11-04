@@ -94,7 +94,27 @@ export const createPaymentRequest = async (
 			...information,
 			createdAt: firestore.FieldValue.serverTimestamp(),
 			updatedAt: firestore.FieldValue.serverTimestamp(),
-			completed: false
+			status: "pending",
+		});
+
+		return callback(null);
+	} catch (err) {
+		if (process.env.NODE_ENV !== "production") console.log(err);
+		return callback(err.message);
+	}
+};
+
+export const declinePaymentRequest = async (
+	paymentRequestId: string,
+	callback: (errorMessage: string | null) => any
+) => {
+	try {
+		const paymentRequestRef = db
+			.collection("paymentrequests")
+			.doc(paymentRequestId);
+		await paymentRequestRef.update({
+			status: "declined",
+			updatedAt: firestore.FieldValue.serverTimestamp(),
 		});
 
 		return callback(null);
