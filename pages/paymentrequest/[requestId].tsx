@@ -119,7 +119,7 @@ const PaymentRequestPage = ({
 				</StatHelpText>
 			</Stat>
 			{stateUser?.uid === paymentRequestInfo?.toUser &&
-			!["declined", "completed"].includes(paymentRequestStatus) ? (
+			!["declined", "paid"].includes(paymentRequestStatus) ? (
 				<HStack p={3} spacing={4}>
 					<Button
 						colorScheme="teal"
