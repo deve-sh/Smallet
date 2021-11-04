@@ -1,6 +1,6 @@
 import request from "../utils/request";
 import { getToken } from "../firebase/authentication";
-import db from "../firebase/firestore";
+import db, { firestore } from "../firebase/firestore";
 
 export const createAddMoneyToWalletTransaction = async (
 	transactionInfo: { amount: number; title?: string; description?: string },
@@ -69,5 +69,36 @@ export const getWalletTransactions = async (
 	} catch (err) {
 		if (process.env.NODE_ENV !== "production") console.log(err);
 		return callback(err.message, null);
+	}
+};
+
+interface PaymentRequestInformation {
+	amount: number;
+	title?: string;
+	descrtiption?: string;
+}
+
+export const createPaymentRequest = async (
+	userId: string,
+	userToRequestFrom: string,
+	information: PaymentRequestInformation,
+	callback: (errorMessage: string | null) => any
+) => {
+	try {
+		if (!userId || !userToRequestFrom || userId === userToRequestFrom) return;
+
+		const paymentRequestRef = db.collection("paymentrequests").doc();
+		await paymentRequestRef.set({
+			fromUser: userId,
+			toUser: userToRequestFrom,
+			...information,
+			createdAt: firestore.FieldValue.serverTimestamp(),
+			updatedAt: firestore.FieldValue.serverTimestamp(),
+		});
+
+		return callback(null);
+	} catch (err) {
+		if (process.env.NODE_ENV !== "production") console.log(err);
+		return callback(err.message);
 	}
 };
