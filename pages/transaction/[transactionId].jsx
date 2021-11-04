@@ -13,7 +13,7 @@ import {
 	Alert,
 	AlertIcon,
 } from "@chakra-ui/react";
-import { InfoIcon, WarningIcon } from "@chakra-ui/icons";
+import { InfoIcon, TimeIcon, WarningIcon } from "@chakra-ui/icons";
 import { IoCheckmarkDone } from "react-icons/io5";
 import { MdClear } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
@@ -77,6 +77,10 @@ const TransactionPage = ({
 						<br />
 						<InfoIcon mr={2} />
 						{orderInfo ? `Order ID: ${transactionInfo?.order}` : ""}
+						<br />
+						<TimeIcon mr={2} />
+						{new Date(transactionInfo.createdAt).toDateString()}{" "}
+						{new Date(transactionInfo.createdAt).toTimeString().slice(0, 8)}
 					</>
 				</StatHelpText>
 			</Stat>
@@ -146,6 +150,12 @@ TransactionPage.getInitialProps = async (context) => {
 		).data();
 
 		if (!transactionInfo) return { error: "Transaction Not Found" };
+		transactionInfo.updatedAt = transactionInfo.updatedAt
+			.toDate()
+			.toISOString();
+		transactionInfo.createdAt = transactionInfo.createdAt
+			.toDate()
+			.toISOString();
 
 		const userInfo = (
 			await db.collection("users").doc(transactionInfo.user).get()

@@ -24,6 +24,7 @@ import Error from "../../components/Layout/Error";
 import UserTile from "../../components/Profile/UserTile";
 import { declinePaymentRequest } from "../../API/wallet";
 import toasts from "../../utils/toasts";
+import { TimeIcon } from "@chakra-ui/icons";
 
 const PaymentRequestPage = ({
 	paymentRequestInfo,
@@ -86,7 +87,13 @@ const PaymentRequestPage = ({
 						</>
 					</HStack>
 				</StatNumber>
-				<StatHelpText>Request ID: {paymentRequestId}</StatHelpText>
+				<StatHelpText>
+					Request ID: {paymentRequestId}
+					<br />
+					<TimeIcon mr={2} />
+					{new Date(paymentRequestInfo.createdAt).toDateString()}{" "}
+					{new Date(paymentRequestInfo.createdAt).toTimeString().slice(0, 8)}
+				</StatHelpText>
 			</Stat>
 			{stateUser?.uid === paymentRequestInfo?.toUser &&
 			!["declined", "completed"].includes(paymentRequestStatus) ? (
@@ -143,6 +150,12 @@ PaymentRequestPage.getInitialProps = async (context) => {
 		).data();
 
 		if (!paymentRequestInfo) return { error: "Payment Request Not Found" };
+		paymentRequestInfo.updatedAt = paymentRequestInfo.updatedAt
+			.toDate()
+			.toISOString();
+		paymentRequestInfo.createdAt = paymentRequestInfo.createdAt
+			.toDate()
+			.toISOString();
 
 		const fromUserInfo = (
 			await db.collection("users").doc(paymentRequestInfo.fromUser).get()
