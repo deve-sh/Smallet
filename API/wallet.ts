@@ -94,6 +94,7 @@ export const createPaymentRequest = async (
 			...information,
 			createdAt: firestore.FieldValue.serverTimestamp(),
 			updatedAt: firestore.FieldValue.serverTimestamp(),
+			completed: false
 		});
 
 		return callback(null);
