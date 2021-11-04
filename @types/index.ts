@@ -47,3 +47,15 @@ export interface Transaction {
 	wallet: string;
 	type?: "wallet_topup" | "money_transfer" | "purchase_transaction";
 }
+
+export interface PaymentRequest {
+	id: string;
+	title?: string;
+	description?: string;
+	amount: number;
+	createdAt: any;
+	status: "declined" | "paid" | "pending";
+	updatedAt?: any;
+	fromUser: string;
+	toUser: string;
+}
