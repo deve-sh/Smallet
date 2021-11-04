@@ -21,6 +21,7 @@ import {
 import { FaMoneyCheck } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { BiTransfer } from "react-icons/bi";
+import { MdRequestQuote } from "react-icons/md";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { Transaction } from "../../@types";
@@ -31,6 +32,7 @@ import NoneFound from "../../components/Layout/NoneFound";
 import TransactionTile from "../../components/Wallet/TransactionTile";
 import AddMoneyTransactionModal from "../../components/Wallet/AddMoneyTranactionModal";
 import TransferMoneyModal from "../../components/Wallet/TransferMoney";
+import RequestMoneyModal from "../../components/Wallet/RequestMoneyModal";
 
 import { getWalletRef } from "../../API";
 import { getWalletTransactions } from "../../API/wallet";
@@ -75,6 +77,12 @@ const Wallet = ({}) => {
 		isOpen: showTransferMoneyToWalletModal,
 		onOpen: openTransferMoneyToWalletModal,
 		onClose: closeTransferMoneyToWalletModal,
+	} = useDisclosure();
+
+	const {
+		isOpen: showRequestMoneyModal,
+		onOpen: openRequestMoneyModal,
+		onClose: closeRequestMoneyModal,
 	} = useDisclosure();
 
 	const [walletInfo, setWalletInfo] = useState(null);
@@ -203,6 +211,14 @@ const Wallet = ({}) => {
 							<Box textAlign="right" width="100%">
 								<HStack spacing={5} justifyContent="flex-end">
 									<Button
+										colorScheme="purple"
+										variant="outline"
+										onClick={openRequestMoneyModal}
+										rightIcon={<MdRequestQuote size="1.25rem" />}
+									>
+										Request Money
+									</Button>
+									<Button
 										colorScheme="orange"
 										variant="outline"
 										onClick={openTransferMoneyToWalletModal}
@@ -228,6 +244,10 @@ const Wallet = ({}) => {
 							<TransferMoneyModal
 								isOpen={showTransferMoneyToWalletModal}
 								onClose={closeTransferMoneyToWalletModal}
+							/>
+							<RequestMoneyModal
+								isOpen={showRequestMoneyModal}
+								onClose={closeRequestMoneyModal}
 							/>
 							{transactions.length ? (
 								transactions.map((transaction: Transaction) => (
