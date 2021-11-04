@@ -44,6 +44,7 @@ const PaymentRequestPage = ({
 	);
 
 	const completePaymentRequest = () => {
+		if (!window.confirm("Are you sure? This action is irreversible.")) return;
 		setIsLoading(true);
 		createWalletMoneyTransferTransaction(
 			Number(paymentRequestInfo.amount) * 100, // Paise for backend to process
