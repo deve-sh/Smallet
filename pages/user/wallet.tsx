@@ -21,7 +21,7 @@ import {
 import { FaMoneyCheck } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { BiTransfer } from "react-icons/bi";
-import { MdRequestQuote } from "react-icons/md";
+import { MdFileUpload, MdRequestQuote } from "react-icons/md";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { Transaction } from "../../@types";
@@ -30,9 +30,11 @@ import ContentWrapper from "../../components/Layout/ContentWrapper";
 import FullPageLoader from "../../components/Layout/FullPageLoader";
 import NoneFound from "../../components/Layout/NoneFound";
 import TransactionTile from "../../components/Wallet/TransactionTile";
+
 import AddMoneyTransactionModal from "../../components/Wallet/AddMoneyTranactionModal";
 import TransferMoneyModal from "../../components/Wallet/TransferMoney";
 import RequestMoneyModal from "../../components/Wallet/RequestMoneyModal";
+import PaymentRequests from "../../components/Wallet/PaymentRequests";
 
 import { getWalletRef } from "../../API";
 import { getWalletTransactions } from "../../API/wallet";
@@ -64,6 +66,21 @@ const TransactionListImageContainer = styled(Center)`
 	}
 `;
 
+const WalletActionsStack = styled(HStack)`
+	@media (max-width: 576px) {
+		flex-direction: column;
+		button {
+			width: 100%;
+			margin: 0;
+			margin-inline-start: 0 !important;
+			-webkit-margin-start: 0 !important;
+		}
+		button:not(:first-child) {
+			margin-top: var(--standard-spacing);
+		}
+	}
+`;
+
 const Wallet = ({}) => {
 	const user = useStore((state) => state.user);
 
@@ -83,6 +100,12 @@ const Wallet = ({}) => {
 		isOpen: showRequestMoneyModal,
 		onOpen: openRequestMoneyModal,
 		onClose: closeRequestMoneyModal,
+	} = useDisclosure();
+
+	const {
+		isOpen: showPaymentRequestsListModal,
+		onOpen: openPaymentRequestsListModal,
+		onClose: closePaymentRequestsListModal,
 	} = useDisclosure();
 
 	const [walletInfo, setWalletInfo] = useState(null);
@@ -183,7 +206,7 @@ const Wallet = ({}) => {
 							</StatHelpText>
 						</Stat>
 						<Stat>
-							<StatLabel fontSize="1.125rem">Number Of Transactions</StatLabel>
+							<StatLabel fontSize="1.125rem">Transactions</StatLabel>
 							<StatNumber fontSize="1.875rem">
 								{parseInt(walletInfo.nTransactions)}
 							</StatNumber>
@@ -209,7 +232,15 @@ const Wallet = ({}) => {
 						<TransactionList minWidth="70%">
 							{/* Add Money To Wallet and Money Transfer related */}
 							<Box textAlign="right" width="100%">
-								<HStack spacing={5} justifyContent="flex-end">
+								<WalletActionsStack spacing={2} justifyContent="flex-end">
+									<Button
+										colorScheme="cyan"
+										variant="outline"
+										onClick={openPaymentRequestsListModal}
+										rightIcon={<MdFileUpload size="1.25rem" />}
+									>
+										Payment Requests
+									</Button>
 									<Button
 										colorScheme="purple"
 										variant="outline"
@@ -224,7 +255,7 @@ const Wallet = ({}) => {
 										onClick={openTransferMoneyToWalletModal}
 										rightIcon={<BiTransfer size="1.25rem" />}
 									>
-										Transfer Money
+										Send Money
 									</Button>
 									<Button
 										colorScheme="green"
@@ -234,7 +265,7 @@ const Wallet = ({}) => {
 									>
 										Add Money
 									</Button>
-								</HStack>
+								</WalletActionsStack>
 							</Box>
 							<br />
 							<AddMoneyTransactionModal
@@ -248,6 +279,10 @@ const Wallet = ({}) => {
 							<RequestMoneyModal
 								isOpen={showRequestMoneyModal}
 								onClose={closeRequestMoneyModal}
+							/>
+							<PaymentRequests
+								isOpen={showPaymentRequestsListModal}
+								onClose={closePaymentRequestsListModal}
 							/>
 							{transactions.length ? (
 								transactions.map((transaction: Transaction) => (
