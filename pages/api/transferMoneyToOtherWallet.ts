@@ -16,7 +16,7 @@ export default async function transferMoneyToOtherWallet(
 		let { amount, userToTransferTo, paymentRequestId } = req.body; // amount -> Paise
 		const { authorization } = req.headers;
 
-		if (!authorization || !paymentRequestId || !amount || !userToTransferTo)
+		if (!authorization || !amount || !userToTransferTo)
 			return error(400, "Invalid information.");
 
 		amount = Number(amount) || 0;
@@ -48,6 +48,11 @@ export default async function transferMoneyToOtherWallet(
 			const paymentRequestInfo = (await paymentRequestRef.get()).data();
 			if (!paymentRequestInfo)
 				return error(404, "Payment Request Info Not Found");
+			if (
+				paymentRequestInfo.status === "declined" ||
+				paymentRequestInfo.status === "paid"
+			)
+				return error(400, "Payment Request has already been processed before.");
 			amount = Number(paymentRequestInfo.amount);
 		}
 
