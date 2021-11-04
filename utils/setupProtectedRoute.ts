@@ -21,12 +21,18 @@ export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 			});
 			res?.end?.();
 		} else {
-			if (!Cookie.get("accessToken")) {
-				Router.push("/");
+			if (Cookie.get("accessToken")) {
+				// Allowed
+				if (callback) {
+					const valuesToReturnAsInitialProps = await callback(ctx);
+					return valuesToReturnAsInitialProps;
+				}
 				return { protected: true };
 			}
+			Router.push("/");
+			return { protected: true };
 		}
-		return { protected: false };
+		return { protected: true };
 	};
 }
 
