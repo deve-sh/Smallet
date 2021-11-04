@@ -22,7 +22,10 @@ import useStore from "../../hooks/useStore";
 
 import Error from "../../components/Layout/Error";
 import UserTile from "../../components/Profile/UserTile";
-import { declinePaymentRequest } from "../../API/wallet";
+import {
+	createWalletMoneyTransferTransaction,
+	declinePaymentRequest,
+} from "../../API/wallet";
 import toasts from "../../utils/toasts";
 import { TimeIcon } from "@chakra-ui/icons";
 
@@ -39,6 +42,26 @@ const PaymentRequestPage = ({
 	const [paymentRequestStatus, setPaymentRequestStatus] = useState(
 		paymentRequestInfo.status || "pending"
 	);
+
+	const completePaymentRequest = () => {
+		setIsLoading(true);
+		createWalletMoneyTransferTransaction(
+			Number(paymentRequestInfo.amount) * 100, // Paise for backend to process
+			paymentRequestInfo.fromUser,
+			paymentRequestId,
+			(error, response) => {
+				setIsLoading(false);
+				if (error) return toasts.generateError(error);
+				if (response?.message && response?.success) {
+					toasts.generateSuccess(response.message);
+					setPaymentRequestStatus("paid");
+				} else
+					return toasts.generateError(
+						"Something went wrong, please try again later."
+					);
+			}
+		);
+	};
 
 	const declineRequest = () => {
 		if (!window.confirm("Are you sure? This is irreversible")) return;
@@ -98,7 +121,12 @@ const PaymentRequestPage = ({
 			{stateUser?.uid === paymentRequestInfo?.toUser &&
 			!["declined", "completed"].includes(paymentRequestStatus) ? (
 				<HStack p={3} spacing={4}>
-					<Button colorScheme="teal" variant="solid" isLoading={isLoading}>
+					<Button
+						colorScheme="teal"
+						variant="solid"
+						onClick={completePaymentRequest}
+						isLoading={isLoading}
+					>
 						Pay
 					</Button>
 					<Button

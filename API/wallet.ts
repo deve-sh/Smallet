@@ -31,13 +31,14 @@ export const createAddMoneyToWalletTransaction = async (
 export const createWalletMoneyTransferTransaction = async (
 	amount: number,
 	userToTransferTo: string,
+	paymentRequestId: string | null,
 	callback: (errorMessage: string | null, orderInfo?: any) => any
 ) => {
 	try {
 		if (!amount || !userToTransferTo) return callback("Amount or user invalid");
 		request(
 			"/api/transferMoneyToOtherWallet",
-			{ amount, userToTransferTo },
+			{ amount, paymentRequestId, userToTransferTo },
 			{ headers: { authorization: await getToken() } },
 			"post",
 			(error, response) => {
