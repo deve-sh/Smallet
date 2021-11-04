@@ -124,3 +124,25 @@ export const declinePaymentRequest = async (
 		return callback(err.message);
 	}
 };
+
+export const getPendingPaymentRequests = async (
+	userId: string,
+	callback: (errorMessage: string | null, requestList?: any[]) => any
+) => {
+	try {
+		const pendingPaymentRequests = await db
+			.collection("paymentrequests")
+			.where("status", "==", "pending")
+			.where("toUser", "==", userId)
+			.orderBy("createdAt", "desc")
+			.limit(10)
+			.get();
+		return callback(
+			null,
+			pendingPaymentRequests.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+		);
+	} catch (err) {
+		if (process.env.NODE_ENV !== "production") console.log(err);
+		return callback(err.message);
+	}
+};
