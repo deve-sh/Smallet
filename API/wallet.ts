@@ -75,7 +75,7 @@ export const getWalletTransactions = async (
 interface PaymentRequestInformation {
 	amount: number;
 	title?: string;
-	descrtiption?: string;
+	description?: string;
 }
 
 export const createPaymentRequest = async (
