@@ -82,7 +82,7 @@ export const createPaymentRequest = async (
 	userId: string,
 	userToRequestFrom: string,
 	information: PaymentRequestInformation,
-	callback: (errorMessage: string | null) => any
+	callback: (errorMessage: string | null, paymentRequestId?: string) => any
 ) => {
 	try {
 		if (!userId || !userToRequestFrom || userId === userToRequestFrom) return;
@@ -97,7 +97,7 @@ export const createPaymentRequest = async (
 			status: "pending",
 		});
 
-		return callback(null);
+		return callback(null, paymentRequestRef.id);
 	} catch (err) {
 		if (process.env.NODE_ENV !== "production") console.log(err);
 		return callback(err.message);

@@ -79,11 +79,11 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 				title: requestTitle,
 				description: requestDescription,
 			},
-			(error) => {
+			(error, paymentRequestId) => {
 				setIsLoading(false);
 				if (error) return toasts.generateError(error);
 				toasts.generateSuccess("Created Payment Request");
-				return router.reload();
+				return router.push(`/paymentrequest/${paymentRequestId}`);
 			}
 		);
 	};
