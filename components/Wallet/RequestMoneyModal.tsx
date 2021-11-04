@@ -33,25 +33,25 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 	const [amountToRequest, setAmountToRequest]: [string | number, (any) => any] =
 		useState("");
 
-	const [userToTransferToIdentifier, setUserToTransferToIdentifier] =
+	const [userToRequestFromIdentifier, setuserToRequestFromIdentifier] =
 		useState("");
 	const [hasFetchedUserOptionsOnce, setHasFetchedUserOptionsOnce] =
 		useState(false);
 	const [userOptions, setUserOptions] = useState([]);
-	const [userIdToTransferMoneyTo, setUserIdToTransferMoneyTo] = useState("");
+	const [userIdToRequestMoneyFrom, setuserIdToRequestMoneyFrom] = useState("");
 
 	const searchForUsers = () => {
 		if (
-			!userToTransferToIdentifier ||
-			userToTransferToIdentifier === stateUser.phoneNumber ||
-			userToTransferToIdentifier === stateUser.email
+			!userToRequestFromIdentifier ||
+			userToRequestFromIdentifier === stateUser.phoneNumber ||
+			userToRequestFromIdentifier === stateUser.email
 		)
 			return;
 
 		setIsLoading(true);
-		setUserIdToTransferMoneyTo("");
+		setuserIdToRequestMoneyFrom("");
 		getUserByPhoneOrEmail(
-			userToTransferToIdentifier,
+			userToRequestFromIdentifier,
 			[stateUser.uid],
 			(error, userListFetched) => {
 				setIsLoading(false);
@@ -63,17 +63,17 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 	};
 
 	const selectUser = (userId) =>
-		setUserIdToTransferMoneyTo(
-			userId === userIdToTransferMoneyTo ? null : userId
+		setuserIdToRequestMoneyFrom(
+			userId === userIdToRequestMoneyFrom ? null : userId
 		);
 
-	const startAddMoneyTransactionProcess = () => {
-		if (!amountToRequest || !userIdToTransferMoneyTo) return;
+	const startRequestMoneyProcess = () => {
+		if (!amountToRequest || !userIdToRequestMoneyFrom) return;
 
 		setIsLoading(true);
 		createPaymentRequest(
 			stateUser.uid || stateUser.id,
-			userIdToTransferMoneyTo,
+			userIdToRequestMoneyFrom,
 			{
 				amount: Number(amountToRequest) * 100,
 				title: requestTitle,
@@ -90,7 +90,7 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 
 	return (
 		<ReusableModal
-			title="Transfer Money To Other User"
+			title="Request Money To Other User"
 			isOpen={isOpen}
 			onClose={onClose}
 			actionButton={
@@ -99,9 +99,9 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 					variant="solid"
 					isLoading={isLoading}
 					rightIcon={<MdSend size="1.25rem" />}
-					onClick={startAddMoneyTransactionProcess}
+					onClick={startRequestMoneyProcess}
 				>
-					Transfer Money
+					Request Money
 				</Button>
 			}
 		>
@@ -111,9 +111,9 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 					placeholder="Email or Phone of User to Transfer To"
 					onChange={(e) => {
 						e.persist();
-						setUserToTransferToIdentifier(e.target.value);
+						setuserToRequestFromIdentifier(e.target.value);
 					}}
-					value={userToTransferToIdentifier}
+					value={userToRequestFromIdentifier}
 					flex="9"
 					required
 					disabled={isLoading}
@@ -136,12 +136,12 @@ const RequestMoneyModal = ({ isOpen, onClose }) => {
 								onClick={() => selectUser(user.id)}
 								key={user.id || user.uid}
 								title={
-									user.id === userIdToTransferMoneyTo
+									user.id === userIdToRequestMoneyFrom
 										? "Money will be transferred to this user"
 										: user.displayName
 								}
 								border={
-									user.id === userIdToTransferMoneyTo
+									user.id === userIdToRequestMoneyFrom
 										? "dashed green"
 										: "1px solid #cfcfcf"
 								}
