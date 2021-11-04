@@ -46,7 +46,7 @@ export default async function transferMoneyToOtherWallet(
 				.collection("paymentrequests")
 				.doc(paymentRequestId);
 			const paymentRequestInfo = (await paymentRequestRef.get()).data();
-			if (!paymentRequestInfo)
+			if (!paymentRequestInfo || paymentRequestInfo.toUser !== decodedToken.uid)
 				return error(404, "Payment Request Info Not Found");
 			if (
 				paymentRequestInfo.status === "declined" ||
