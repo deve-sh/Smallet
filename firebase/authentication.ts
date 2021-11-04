@@ -18,7 +18,7 @@ export const providers = { googleProvider, githubProvider, mainFirebase };
 const getToken = async (refreshToken = true) => {
 	if (auth.currentUser) {
 		const token = await auth.currentUser.getIdToken(refreshToken);
-		cookie.set("accessToken", token);
+		cookie.set("accessToken", token, { expires: 30 });
 		return token;
 	} else return cookie.get("accessToken") || "";
 };

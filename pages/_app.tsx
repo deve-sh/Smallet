@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { useDisclosure as useToggleableModal } from "@chakra-ui/react";
 
+import cookie from "js-cookie";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -78,6 +80,7 @@ const App = ({ Component: Page, pageProps }) => {
 	}, []);
 
 	const logoutUser = () => {
+		cookie.remove("accessToken");
 		auth.signOut();
 		router.push("/");
 	};
