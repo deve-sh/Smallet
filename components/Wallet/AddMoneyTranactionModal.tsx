@@ -32,7 +32,9 @@ const AddMoneyTransactionModal = ({ isOpen, onClose }) => {
 				setIsLoading(false);
 				if (error) return toasts.generateError(error);
 				if (response?.order?.id)
-					return router.push(`/makeWalletPayment?orderId=${response.order.id}`);
+					return window.location.replace(
+						`/makeWalletPayment?orderId=${response.order.id}`
+					);
 				else
 					return toasts.generateError(
 						"Something went wrong, please try again later."
