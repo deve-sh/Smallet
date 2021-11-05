@@ -7,7 +7,7 @@ export default async function createWalletAddMoneyTransaction(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
-	const error = (status, message) =>
+	const error = (status: number, message: string) =>
 		res.status(status).json({
 			error: message,
 			message,
