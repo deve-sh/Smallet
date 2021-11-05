@@ -1,6 +1,7 @@
-import { FirebaseUser } from "../@types";
+import { EmailOptions, FirebaseUser } from "../@types";
 import db, { firestore } from "../firebase/firestore";
-import auth from "../firebase/authentication";
+import auth, { getToken } from "../firebase/authentication";
+import request from "../utils/request";
 
 export const getUserDetails = async (userId: string) => {
 	try {
@@ -93,6 +94,27 @@ export const getUserByPhoneOrEmail = async (
 			}
 		}
 		return callback(null, options);
+	} catch (err) {
+		if (process.env.NODE_ENV !== "production") console.log(err);
+		return callback(err.message, null);
+	}
+};
+
+export const sendEmailToUsers = async (
+	emailOptions: EmailOptions,
+	callback: (errorMessage: string | null, response?: any) => any
+) => {
+	try {
+		request(
+			"/api/sendEmail",
+			emailOptions,
+			{ headers: { authorization: await getToken() } },
+			"post",
+			(error, response) => {
+				if (error) return callback(error);
+				return callback(null, response);
+			}
+		);
 	} catch (err) {
 		if (process.env.NODE_ENV !== "production") console.log(err);
 		return callback(err.message, null);
