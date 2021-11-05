@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
+import { EmailOptions } from "../../@types";
 
 import { validateIdToken } from "../../utils/firebaseAdminUtils";
 
@@ -14,7 +15,8 @@ export default async function sendEmail(
 		});
 
 	try {
-		const { content, text, to, subject, actionLink } = req.body;
+		const { content, text, to, subject, actionLink, actionText }: EmailOptions =
+			req.body;
 		const { authorization } = req.headers;
 
 		if (
@@ -23,6 +25,7 @@ export default async function sendEmail(
 			!to ||
 			!to.includes("@") ||
 			!actionLink ||
+			!actionText ||
 			!authorization
 		)
 			return error(400, "Incomplete Information");

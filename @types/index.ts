@@ -59,3 +59,12 @@ export interface PaymentRequest {
 	fromUser: string;
 	toUser: string;
 }
+
+export interface EmailOptions {
+	to: string | string[];
+	subject: string;
+	content: string;
+	text?: string;
+	actionLink: string;
+	actionText: string;
+}
