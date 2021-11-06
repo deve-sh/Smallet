@@ -55,7 +55,7 @@ export default async function sendEmail(
 			html: content || text,
 		});
 
-		console.log("Message sent: ", info, info.messageId);
+		console.log("Message sent: ", info.messageId);
 		console.log("Preview URL: ", nodemailer.getTestMessageUrl(info));
 
 		return res.status(200).json({
