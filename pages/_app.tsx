@@ -74,6 +74,13 @@ const App = ({ Component: Page, pageProps }) => {
 						if (err) console.log(err);
 					}
 				);
+				// Check if there's a redirectTo parameter
+				const urlParams = new URLSearchParams(window.location.search);
+				const redirectTo = urlParams.get("redirectTo");
+				if (redirectTo) {
+					setUser(user);
+					return window.location.replace(decodeURIComponent(redirectTo));
+				}
 			}
 			setUser(user);
 		});

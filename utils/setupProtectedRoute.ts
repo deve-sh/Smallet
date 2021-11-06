@@ -3,8 +3,10 @@ import Cookie from "js-cookie";
 
 export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 	return async function getInitialProps(ctx) {
-		const { req, res } = ctx;
+		const { req, res, asPath } = ctx;
 		const isServer = typeof window === "undefined";
+
+		const redirectTo = `/login?redirectTo=${encodeURIComponent(asPath)}`;
 
 		if (isServer) {
 			if (req?.cookies?.accessToken) {
@@ -17,7 +19,7 @@ export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 			}
 			// Redirect to home page.
 			res?.writeHead?.(302, {
-				Location: "/login",
+				Location: redirectTo,
 			});
 			res?.end?.();
 		} else {
@@ -29,7 +31,7 @@ export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 				}
 				return { protected: true };
 			}
-			Router.push("/login");
+			Router.push(redirectTo);
 			return { protected: true };
 		}
 		return { protected: true };
