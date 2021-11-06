@@ -1,6 +1,7 @@
 import request from "../utils/request";
 import { getToken } from "../firebase/authentication";
 import db, { firestore } from "../firebase/firestore";
+import { sendEmailToUsers } from ".";
 
 export const createAddMoneyToWalletTransaction = async (
 	transactionInfo: { amount: number; title?: string; description?: string },
@@ -98,6 +99,21 @@ export const createPaymentRequest = async (
 			status: "pending",
 		});
 
+		const emailOptions = {
+			content: `Hey there, there's a payment request of Rs. ${Number(
+				information.amount / 100
+			).toFixed(2)} from your account.<br />`,
+			text: `Hey there, there's a payment request of Rs. ${Number(
+				information.amount / 100
+			).toFixed(2)} from your account.`,
+			subject: "Smallet - New Payment Request",
+			actionLink:
+				process.env.NEXT_PUBLIC_FRONTEND_URL +
+				`/paymentrequest/${paymentRequestRef.id}`,
+			actionText: "Click Here To View",
+		};
+		emailOptions.content += `<br />Please click <a href="${emailOptions.actionLink}" target="_blank" rel="noopener noreferrer">${emailOptions.actionText}</a>`;
+		sendEmailToUsers(userToRequestFrom, emailOptions, () => null);
 		return callback(null, paymentRequestRef.id);
 	} catch (err) {
 		if (process.env.NODE_ENV !== "production") console.log(err);
