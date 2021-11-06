@@ -17,7 +17,7 @@ export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 			}
 			// Redirect to home page.
 			res?.writeHead?.(302, {
-				Location: "/",
+				Location: "/login",
 			});
 			res?.end?.();
 		} else {
@@ -29,7 +29,7 @@ export default function setupProtectedRoute(callback?: (ctx: any) => any) {
 				}
 				return { protected: true };
 			}
-			Router.push("/");
+			Router.push("/login");
 			return { protected: true };
 		}
 		return { protected: true };
