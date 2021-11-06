@@ -112,7 +112,7 @@ export const createPaymentRequest = async (
 				`/paymentrequest/${paymentRequestRef.id}`,
 			actionText: "Click Here To View",
 		};
-		emailOptions.content += `<br />Please click <a href="${emailOptions.actionLink}" target="_blank" rel="noopener noreferrer">${emailOptions.actionText}</a>`;
+		emailOptions.content += `<br />Please <a href="${emailOptions.actionLink}" target="_blank" rel="noopener noreferrer">${emailOptions.actionText}</a>`;
 		sendEmailToUsers(userToRequestFrom, emailOptions, () => null);
 		return callback(null, paymentRequestRef.id);
 	} catch (err) {
