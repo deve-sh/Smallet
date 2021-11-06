@@ -101,10 +101,19 @@ export const getUserByPhoneOrEmail = async (
 };
 
 export const sendEmailToUsers = async (
+	toUser: string | null,
 	emailOptions: EmailOptions,
 	callback: (errorMessage: string | null, response?: any) => any
 ) => {
 	try {
+		// Get details of user to send email to.
+		if (toUser && !emailOptions.to) {
+			const user = (await db.collection("users").doc(toUser).get()).data();
+			if (!user) return callback("User not found to send email to.");
+			else if (!user.email) return callback("User doesn't have email enabled.");
+			emailOptions.to = user.email;
+		}
+
 		request(
 			"/api/sendEmail",
 			emailOptions,

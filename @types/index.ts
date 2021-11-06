@@ -61,7 +61,7 @@ export interface PaymentRequest {
 }
 
 export interface EmailOptions {
-	to: string | string[];
+	to?: string | string[];
 	subject: string;
 	content: string;
 	text?: string;
