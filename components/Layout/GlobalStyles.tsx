@@ -78,6 +78,11 @@ const GlobalStyles = ({ darkMode = false }) => (
 			.react-tel-input .special-label {
 				display: none;
 			}
+
+			.react-tel-input #phonenumber {
+				background: var(--white);
+				color: var(--black);
+			}
 		`}
 	/>
 );
