@@ -1,6 +1,6 @@
 # Smallet
 
-<p style="text-align:center">
+<p align="center">
     <img src="./public/logo192.png" style="width: 128px;height: 128px;" alt="Smallet" />
 </p>
 
@@ -34,7 +34,7 @@ FIREBASE_SERVICE_ACCOUNT=
 
 For `FIREBASE_SERVICE_ACCOUNT` use [this tutorial](https://dev.to/vvo/how-to-add-firebase-service-account-json-files-to-vercel-ph5).
 
-<p style="text-align:center">
+<p align="center">
     <img src="./public/images/walletscreely.png" alt="Smallet Screenshot" />
 </p>
 
