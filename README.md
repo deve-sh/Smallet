@@ -1,5 +1,9 @@
 # Smallet
 
+<div style="text-align:center">
+    <img src="./public/logo192.png" alt="Smallet" />
+</div>
+
 A nice little mini-digital wallet for everyone.
 
 Its not a real wallet, just meant to be a prototype for people to look at and understand how a digital wallet works.
@@ -29,6 +33,10 @@ FIREBASE_SERVICE_ACCOUNT=
 ```
 
 For `FIREBASE_SERVICE_ACCOUNT` use [this tutorial](https://dev.to/vvo/how-to-add-firebase-service-account-json-files-to-vercel-ph5).
+
+<div style="text-align:center">
+    <img src="./public/images/walletscreely.png" alt="Smallet Screenshot" />
+</div>
 
 ### Feedback
 
